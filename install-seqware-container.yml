@@ -5,6 +5,7 @@
 - hosts: all
   sudo: True
   tasks:
-  - name:
-      image: seqware/seqware_full
+  - name: Install seqware/seqware_full Docker container
+      docker:
+        image: seqware/seqware_full
 
