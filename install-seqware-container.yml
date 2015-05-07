@@ -1,0 +1,10 @@
+--- 
+# file: docker-start.yml
+# This file is used for installing a seqware container
+   
+- hosts: all
+  sudo: True
+  tasks:
+  - name:
+      image: seqware/seqware_full
+
