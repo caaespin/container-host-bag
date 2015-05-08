@@ -8,8 +8,8 @@
 - name: install docker.io package
   shell: "curl --ssl https://get.docker.com/ | sudo sh"
   when: docker_info_pre.stderr.find('not found') != -1
-  notify:
-    - restart docker
+#  notify:
+#    - restart docker
 
 - name: setup ubuntu user for non-root access
   sudo: yes
