@@ -29,7 +29,7 @@
     ignore_errors: yes
 
   # This is a super-fugly way of determining the number of hosts in total, Ansible bug referenced
-  - hosts: master:worker 
+- hosts: all
   sudo: True
   tasks:
   - name: Determine number of hosts in fugly way 
