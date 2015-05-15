@@ -12,6 +12,6 @@
 # This file is used for installing a seqware container
 - name: Install seqware_full Docker container
   docker:
-    image: seqware/seqware_full 
+    image: seqware/seqware_full:1.1.1 
     pull: missing 
 
