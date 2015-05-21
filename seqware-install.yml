@@ -41,7 +41,7 @@
       shared_storage_system: lvm
       vendor_data: /mnt/seqware-oozie
       lvm_device_whitelist: /dev/xvdd,/dev/xvde
-  include: roles/storage/common/tasks/play_deploy_shared_storage.yml
+  include: roles/storage/common/tasks/play_deploy_lvm_storage.yml
   when: single_node_lvm is defined
      
 - hosts: master:worker
