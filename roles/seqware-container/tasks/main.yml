@@ -1,0 +1,17 @@
+--- 
+- name: Get pip installer
+  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/tmp/get-pip.py
+
+- name: Install pip
+  command: python /tmp/get-pip.py
+
+# fixed to version 1.1.0 due to a bug (2015-05-07, SolomonShorser)
+- name: Install docker-py
+  pip: name=docker-py state=present version=1.1.0
+
+# This file is used for installing a seqware container
+- name: Install seqware_full Docker container
+  docker:
+    image: seqware/seqware_whitestar:1.1.1 
+    pull: missing 
+

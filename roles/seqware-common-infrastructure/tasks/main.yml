@@ -25,16 +25,6 @@
 - apt: update_cache=yes
   when: hadooprepo.changed
 
-- name:  Create mountable home
-  file: state=directory path=/mnt/home
-
-- name:  Add user
-  user: 
-    home: '/mnt/home/seqware'
-    createhome: yes
-    name: 'seqware'
-    shell: '/bin/bash'
-
 - name:  Add mapred user
   user: name=mapred state=present
   
