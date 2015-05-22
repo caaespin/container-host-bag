@@ -1,6 +1,6 @@
 --- 
-# file: seqware-install.yml
-# This file is used for installing a seqware cluster
+# file: install.yml
+# This file is used for installing a container host 
    
 # Not sure why, but I needed this to create a /etc/hosts that actually works with the Ubuntu image here on openstack
 - hosts: master:worker 
@@ -16,20 +16,17 @@
     with_items: groups['all']
   - name: Setting hostname to {{ inventory_hostname }}
     hostname: name={{ inventory_hostname }}
-    when: docker is not defined
   - name: Disable automatic retrieval of hostname from dhcp on Amazon EC2
     template: src=roles/common/templates/dhclient.conf dest=/etc/dhcp/dhclient.conf
-    when: docker is not defined
   - name: Disable setting hostname from /etc/hostname on Amazon EC2
     template: src=roles/common/templates/hostname.conf dest=/etc/init/hostname.conf
-    when: docker is not defined
   - name: Disable ephemeral mount at /mnt for amazon AWS
     shell: umount /mnt
     register: umount_output
     ignore_errors: yes
 
   # This is a super-fugly way of determining the number of hosts in total, Ansible bug referenced
-- hosts: all
+- hosts: master:worker
   sudo: True
   tasks:
   - name: Determine number of hosts in fugly way 
@@ -39,58 +36,16 @@
   sudo: True
   vars:
       shared_storage_system: lvm
-      vendor_data: /mnt/seqware-oozie
+      vendor_data: /datastore
       lvm_device_whitelist: /dev/xvdd,/dev/xvde
   include: roles/storage/common/tasks/play_deploy_lvm_storage.yml
   when: single_node_lvm is defined
      
-- hosts: master:worker
-  sudo: True
-  vars:
-      shared_storage_system: glusterfs
-      vendor_data: /mnt/seqware-oozie
-      glusterfs_version: 3.5 
-  include: roles/storage/common/tasks/play_deploy_shared_storage.yml
-
-- hosts: all 
+- hosts: master:worker 
   sudo: True
   roles:
     - { role: docker }
-
-# The grid master depends on the hosts file, as we need to know at least who we
-# are by this stage. 
-- hosts: master 
-  sudo: True
-  roles:
     - { role: create-seqware-user }
     - { role: java, java_provider: Cloudera }
     - { role: install-docker, when: install_container }
     - { role: seqware-container, when: install_container }
-    - { role: grid-engine, grid_engine_master: True, when: not install_container }
-    - { role: seqware-master-infrastructure, when: not install_container }
-    - { role: seqware-code, when: not  install_container }
-    - { role: seqware-webservice, when: not install_container }
-
-- hosts: worker 
-  sudo: True
-  roles:
-    - { role: create-seqware-user }
-    - { role: install-docker, when: install_container }
-    - { role: seqware-container, when: install_container }
-    - { role: java, java_provider: Cloudera , when: not install_container }
-    - { role: grid-engine, grid_engine_master: False, when: not install_container }
-    - { role: seqware-worker-infrastructure, when: not install_container }
-    
-- hosts: master 
-  sudo: yes
-  sudo_user: seqware
-  vars: 
-      run_integration_tests: false
-  roles:
-    - { role: seqware-integration-tests, when: not install_container and run_integration_tests  }
-    
-- hosts: master
-  sudo: True
-  roles:
-    - { role: seqware-cron , when: not install_container }
-    - { role: seqware-helloworld , when: not install_container }

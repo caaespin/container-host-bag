@@ -5,10 +5,10 @@
                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>io.seqware</groupId>
-  <artifactId>seqware-bag</artifactId>
+  <artifactId>container-host-bag</artifactId>
   <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
-  <name>seqware-bag</name>
+  <name>container-host-bag</name>
   <url>http://maven.apache.org</url>
   <build>
       <sourceDirectory>.</sourceDirectory>
