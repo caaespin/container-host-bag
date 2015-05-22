@@ -6,12 +6,13 @@
   get_url: url=https://raw.githubusercontent.com/CancerCollaboratory/sandbox/{{ pancancer_arch3_version }}/pancancer-arch-3/scripts/kill_worker_daemon.sh dest=/home/ubuntu/kill_worker_daemon.sh
 
 - name: Get run-worker script
-  get_url: url=https://raw.githubusercontent.com/CancerCollaboratory/sandbox/{{ pancancer_arch3_version }}/pancancer-arch-3/scripts/kill_worker_daemon.sh dest=/home/ubuntu/run_worker_daemon.sh
+  get_url: url=https://raw.githubusercontent.com/CancerCollaboratory/sandbox/{{ pancancer_arch3_version }}/pancancer-arch-3/scripts/run_worker_daemon.sh dest=/home/ubuntu/run_worker_daemon.sh
 
 - name: Template workerConfig
   template: src=../templates/workerConfig.j2 dest=/home/ubuntu/workerConfig.json
 
 - name: Run worker as daemon
   sudo: true
+  chdir: /home/ubuntu
   shell: bash /home/ubuntu/run_worker_daemon.sh
 

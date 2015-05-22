@@ -9,7 +9,6 @@
   # Will include all hosts the playbook is run on.
   # Inspired from http://xmeblog.blogspot.com/2013/06/ansible-dynamicaly-update-etchosts.html
   tasks:
-  - debug: var={{ install_container }}
   - name: Build hosts file for all hosts
     lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
     when: hostvars[item].ansible_default_ipv4.address is defined and docker is not defined
@@ -40,12 +39,31 @@
       lvm_device_whitelist: /dev/xvdd,/dev/xvde
   include: roles/storage/common/tasks/play_deploy_lvm_storage.yml
   when: single_node_lvm is defined
-     
+
 - hosts: master:worker 
   sudo: True
+  vars:
+   swap_on: False
   roles:
-    - { role: docker }
-    - { role: create-seqware-user }
+    - { role: mount_device, when: device is defined }
+    # 9000 equals to aproximately 10 GB of SWAP; we don't want to run the playbook if the instance already has 10 GB of SWAP because the role was most probably already applied.
+    - { role: swap-enabled, when: swap_on and ansible_swaptotal_mb < 9000 }
     - { role: java, java_provider: Cloudera }
-    - { role: install-docker, when: install_container }
-    - { role: seqware-container, when: install_container }
+    - { role: install-docker }
+    - { role: seqware-container }
+    - { role: workflow-dewrapper-dependencies, when: (workflow_name is defined and 'DEWrapper' in workflow_name ) }
+
+- hosts: master 
+  sudo: True
+  vars:
+    installed_workflows_path: /workflows
+    target_workflow_path: /workflows
+    user_name: ubuntu 
+  roles:
+    - { role: workflow, when: workflows is defined }
+
+- hosts: master
+  sudo: True
+  roles:
+    - { role: arch_3 }
+
