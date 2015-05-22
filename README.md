@@ -2,6 +2,8 @@
 
 This project consists of a set of Ansible playbooks that allow you to deploy a host running Docker with a set of dependencies for running pan-cancer workflows. 
 
+See recommended parameters at [example\_params.json](example_params.json)
+
 
 ## For DKFZ/EMBL
 If you are going to run the DKFZ/EMBL workflow, you will need to run the DEWrapperWorkflow playbook. To do this, ensure that you specify `DEWrapper` in your json variables:
