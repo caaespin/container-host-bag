@@ -52,6 +52,10 @@
 - name: Load DKFZ image
   shell: docker load -i /home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar
   
+- name: Setup bundled files cache
+  sudo: true
+  file: path=/datastore-cache/DEWorkflowData/dkfz/32749c9f-d8aa-4ff5-b32c-296976aec706/bundledFiles state=directory owner=ubuntu
+
 - name: Setup bundled files
   sudo: true
   file: path=/datastore/DEWorkflowData/dkfz/32749c9f-d8aa-4ff5-b32c-296976aec706/bundledFiles state=directory owner=ubuntu
@@ -59,7 +63,7 @@
 # Before running unarchive, check that a random file in thebundle  isn't already unarchived: the unarchive module will take a very long time to run,
 # even if the file is already unarchived. 
 - name: check if already unarchived
-  stat: path=/datastore/DEWorkflowData/dkfz/32749c9f-d8aa-4ff5-b32c-296976aec706/bundledFiles/annovar/annovar_Sept2013/mousedb/mm10_seq/chrUn_GL456394.fa
+  stat: path=/datastore-cache/DEWorkflowData/dkfz/32749c9f-d8aa-4ff5-b32c-296976aec706/bundledFiles/annovar/annovar_Sept2013/mousedb/mm10_seq/chrUn_GL456394.fa
   sudo_user: 'ubuntu'
   register: bundledFilesStat
 
@@ -77,10 +81,18 @@
   file: path=/datastore state=directory owner=ubuntu group=ubuntu mode=0777
   when: not datastoreStat.stat.exists
   
+- name: Create datastore cache directory
+  sudo: yes
+  file: path=/datastore-cache state=directory owner=ubuntu group=ubuntu mode=0777
+
 - name: Untar bundledFiles
   sudo_user: 'ubuntu'
-  unarchive: src=/home/ubuntu/dkfz-workflow-dependencies_150218_0931.tgz dest=/datastore/DEWorkflowData/dkfz/32749c9f-d8aa-4ff5-b32c-296976aec706 copy=no
+  unarchive: src=/home/ubuntu/dkfz-workflow-dependencies_150218_0931.tgz dest=/datastore-cache/DEWorkflowData/dkfz/32749c9f-d8aa-4ff5-b32c-296976aec706 copy=no
   when: not bundledFilesStat.stat.exists
+
+- name: Synchronize between cache and datastore directories
+  sudo_user: 'ubuntu'
+  shell: rsync -rtv /datastore-cache /datastore
 
 - name: Get workflow launcher script
   sudo_user: 'ubuntu'
