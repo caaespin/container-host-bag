@@ -31,7 +31,8 @@
 - name: Copy over DKFZ image 
   sudo_user: 'ubuntu'
   shell: creates=/home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar aws s3 cp s3://oicr.docker.private.images/dkfz_dockered_workflows_1.0.132-2.tar /home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar 
-
+  register: copy_over_dkfz_images
+  
 - name: Get docker container seqware_whitestar
   docker:
     image: seqware/seqware_whitestar:{{ seqware_version }}
@@ -46,6 +47,7 @@
 
 - name: Load DKFZ image
   shell: docker load -i /home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar
+  when: copy_over_dkfz_images.changed
 
 - name: Create workflows directory
   sudo: yes

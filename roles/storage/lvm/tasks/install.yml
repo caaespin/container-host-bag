@@ -17,6 +17,7 @@
 
 - name: Storage | Create a volume group white listed devices
   lvg: vg=volume_group pvs={{ lvm_device_whitelist }} state=present vg_options=
+  register: lvm_volume_created
 
 - name: Storage | Create logical volume
   lvol: vg=volume_group lv=logical_volume state=present  size=100%FREE
