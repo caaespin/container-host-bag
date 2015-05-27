@@ -16,3 +16,5 @@
     fstype=ecryptfs 
     opts="ecryptfs_cipher=aes,ecryptfs_key_bytes=16,ecryptfs_passthrough=n,ecryptfs_enable_filename_crypto=n,no_sig_cache,key=passphrase:passwd={{ 1024 |random}}{{ 1024 |random}}{{ 1024 |random}}{{ 1024 |random}}{{ 1024 |random}}" 
     state=mounted
+  when: lvm_mount.changed or lvm_volume_created.changed
+
