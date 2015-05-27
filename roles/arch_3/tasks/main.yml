@@ -13,5 +13,4 @@
 
 - name: Run worker as daemon
   sudo: true
-  shell: chdir=/home/ubuntu bash /home/ubuntu/run_worker_daemon.sh
-
+  shell: chdir=/home/ubuntu nohup bash /home/ubuntu/run_worker_daemon.sh &
