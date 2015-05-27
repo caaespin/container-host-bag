@@ -20,3 +20,7 @@
   docker:
     image: seqware/seqware_whitestar:{{ seqware_version }} 
     pull: missing 
+
+- name: Create workflows directory
+  sudo: yes
+  file: path=/workflows state=directory owner=ubuntu group=ubuntu mode=0777
