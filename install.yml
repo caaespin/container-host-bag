@@ -82,5 +82,5 @@
     - name: Copy pem keys to worker (Did you remember to replace the dummy gnos.pem with a valid pem key?)
       copy: src={{ item }} dest=/home/{{ user_name }}/.ssh/ owner={{ user_name }} group={{ user_name }}
       with_fileglob:
-        - /home/{{ user_name }}/.ssh/*.pem
+        - /home/{{ user_name }}/.ssh/gnos.pem
 
