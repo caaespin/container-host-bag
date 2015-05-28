@@ -4,6 +4,15 @@ This project consists of a set of Ansible playbooks that allow you to deploy a h
 
 See recommended parameters at [example\_params.json](example_params.json)
 
+Also see an example inventory file for two hosts:
+
+    [master]
+    i-346b76d2	ansible_ssh_host=54.246.12.180	ansible_ssh_user=ubuntu	ansible_ssh_private_key_file=/home/ubuntu/.ssh/green_snake.pem
+    i-3b6b76dd	ansible_ssh_host=54.216.128.201	ansible_ssh_user=ubuntu	ansible_ssh_private_key_file=/home/ubuntu/.ssh/green_snake.pem
+
+    [all_groups:children]
+    master
+
 
 ## For DKFZ/EMBL
 If you are going to run the DKFZ/EMBL workflow, you will need to run the DEWrapperWorkflow playbook. To do this, ensure that you specify `DEWrapper` in your json variables:
