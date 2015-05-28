@@ -74,3 +74,13 @@
   roles:
     - { role: arch_3 }
 
+- hosts: master:worker
+  sudo: True
+  vars:
+    user_name: ubuntu
+  tasks:
+    - name: Copy pem keys to worker (Did you remember to replace the dummy gnos.pem with a valid pem key?)
+      copy: src={{ item }} dest=/home/{{ user_name }}/.ssh/ owner={{ user_name }} group={{ user_name }}
+      with_fileglob:
+        - /home/{{ user_name }}/.ssh/*.pem
+
