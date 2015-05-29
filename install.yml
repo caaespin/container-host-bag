@@ -34,17 +34,17 @@
 - hosts: master:worker 
   sudo: True
   vars:
+      single_node_lvm: True
       shared_storage_system: lvm
       vendor_data: /datastore
       lvm_device_whitelist: /dev/xvdd,/dev/xvde
   include: roles/storage/common/tasks/play_deploy_lvm_storage.yml
-  when: single_node_lvm is defined
 
 - hosts: master:worker
   sudo: True
   tasks:
   - name: Make sure ubuntu owns the datastore 
-    file: path=/datastore owner=ubuntu group=ubuntu 
+    file: path=/datastore owner=ubuntu group=ubuntu state=directory 
 
 
 - hosts: master:worker 
