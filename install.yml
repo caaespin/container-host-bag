@@ -79,7 +79,7 @@
   vars:
     user_name: ubuntu
   tasks:
-    - name: Copy pem keys to worker (Did you remember to replace the dummy gnos.pem with a valid pem key?)
+    - name: Copy gnos.pem keys to worker
       copy: src={{ item }} dest=/home/{{ user_name }}/.ssh/ owner={{ user_name }} group={{ user_name }}
       with_fileglob:
         - /home/{{ user_name }}/.ssh/gnos.pem
