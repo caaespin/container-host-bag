@@ -1,0 +1,72 @@
+---
+# Install Dependencies for DEWrapper Workflow, and perform setup.
+- name: Install DEWrapper workflow dependencies
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - python
+
+- name: Download get-pip
+  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/tmp/get-pip.py
+
+- name: Install pip
+  sudo: True
+  shell: python /tmp/get-pip.py
+
+- name: Install docker-py
+  sudo: True
+  pip: name=docker-py
+
+- name: Install AWS CLI
+  sudo: True
+  pip: name=awscli
+
+- name: Setup aws config directory
+  sudo: true
+  file: state=directory path=/home/ubuntu/.aws owner=ubuntu
+
+- name: Copy over aws config
+  sudo_user: 'ubuntu'
+  template: src=config.j2 dest=/home/ubuntu/.aws/config 
+
+- name: Copy over DKFZ image 
+  sudo_user: 'ubuntu'
+  shell: creates=/home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar aws s3 cp s3://oicr.docker.private.images/dkfz_dockered_workflows_1.0.132-2.tar /home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar 
+  register: copy_over_dkfz_images
+  
+- name: Get docker container seqware_whitestar
+  docker:
+    image: seqware/seqware_whitestar:{{ seqware_version }}
+
+- name: Get docker container pcawg-delly-workflow
+  docker:
+    image: pancancer/pcawg-delly-workflow:1.0
+
+- name: Get docker container pancancer_upload_download
+  docker:
+    image: pancancer/pancancer_upload_download:1.1
+
+- name: Load DKFZ image
+  shell: docker load -i /home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar
+  when: copy_over_dkfz_images.changed
+
+- name: Create workflows directory
+  sudo: yes
+  file: path=/workflows state=directory owner=ubuntu group=ubuntu mode=0777
+
+- name: check if /datastore already exists
+  stat: path=/datastore
+  register: datastoreStat
+
+# This may already exists (created in another playbook), as symlink to /mnt/datastore
+- name: Create datastore directory
+  sudo: yes
+  file: path=/datastore state=directory owner=ubuntu group=ubuntu mode=0777
+  when: not datastoreStat.stat.exists
+
+- name: Get workflow launcher script
+  sudo_user: 'ubuntu'
+  get_url: dest=/home/ubuntu//launchWorkflow.sh url=https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/DEWrapperWorkflow/{{ dewrapper_workflow_version }}/launchWorkflow.sh
+
+- name: Get workflow launcher script for Whitestar
+  sudo_user: 'ubuntu'
+  get_url: dest=/home/ubuntu//launchWorkflowDev.sh url=https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/DEWrapperWorkflow/{{ dewrapper_workflow_version }}/launchWorkflowDev.sh
