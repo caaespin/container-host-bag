@@ -60,6 +60,17 @@
     - { role: seqware-container }
     - { role: workflow-dewrapper-dependencies, when: (workflow_name is defined and 'DEWrapper' in workflow_name ) }
 
+
+- hosts: master:worker
+  sudo: True
+  vars:
+    user_name: ubuntu
+  tasks:
+    - name: Copy gnos.pem keys to worker
+      copy: src={{ item }} dest=/home/{{ user_name }}/.gnos/ owner={{ user_name }} group={{ user_name }}
+      with_fileglob:
+        - /home/{{ user_name }}/.gnos/*
+
 - hosts: master 
   sudo: True
   vars:
@@ -73,14 +84,4 @@
   sudo: True
   roles:
     - { role: arch_3 }
-
-- hosts: master:worker
-  sudo: True
-  vars:
-    user_name: ubuntu
-  tasks:
-    - name: Copy gnos.pem keys to worker
-      copy: src={{ item }} dest=/home/{{ user_name }}/.gnos/ owner={{ user_name }} group={{ user_name }}
-      with_fileglob:
-        - /home/{{ user_name }}/.gnos/*
 
