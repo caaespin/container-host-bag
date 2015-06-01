@@ -34,17 +34,17 @@
 - hosts: master:worker 
   sudo: True
   vars:
+      single_node_lvm: True
       shared_storage_system: lvm
       vendor_data: /datastore
       lvm_device_whitelist: /dev/xvdd,/dev/xvde
   include: roles/storage/common/tasks/play_deploy_lvm_storage.yml
-  when: single_node_lvm is defined
 
 - hosts: master:worker
   sudo: True
   tasks:
   - name: Make sure ubuntu owns the datastore 
-    file: path=/datastore owner=ubuntu group=ubuntu 
+    file: path=/datastore owner=ubuntu group=ubuntu state=directory 
 
 
 - hosts: master:worker 
@@ -60,6 +60,17 @@
     - { role: seqware-container }
     - { role: workflow-dewrapper-dependencies, when: (workflow_name is defined and 'DEWrapper' in workflow_name ) }
 
+
+- hosts: master:worker
+  sudo: True
+  vars:
+    user_name: ubuntu
+  tasks:
+    - name: Copy gnos.pem keys to worker
+      copy: src={{ item }} dest=/home/{{ user_name }}/.gnos/ owner={{ user_name }} group={{ user_name }}
+      with_fileglob:
+        - /home/{{ user_name }}/.gnos/*
+
 - hosts: master 
   sudo: True
   vars:
@@ -73,14 +84,4 @@
   sudo: True
   roles:
     - { role: arch_3 }
-
-- hosts: master:worker
-  sudo: True
-  vars:
-    user_name: ubuntu
-  tasks:
-    - name: Copy gnos.pem keys to worker
-      copy: src={{ item }} dest=/home/{{ user_name }}/.ssh/ owner={{ user_name }} group={{ user_name }}
-      with_fileglob:
-        - /home/{{ user_name }}/.ssh/gnos.pem
 
