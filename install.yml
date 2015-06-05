@@ -80,6 +80,11 @@
   roles:
     - { role: workflow, when: workflows is defined }
 
+# Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the arch_3 stuff...
+- hosts: master
+  sudo: True
+  include: ../monitoring-bag/site.yml  sensu_server_host=sensu-server
+
 - hosts: master
   sudo: True
   roles:
