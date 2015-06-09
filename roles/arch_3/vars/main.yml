@@ -1,6 +1,6 @@
 ---
 pancancer_arch3_version: 1.0.3
-queueName: seqware
+queueName: pancancer_arch_3 
 queueHost: "{{ lookup('env','PUBLIC_IP_ADDRESS') }}"
 queueUser: queue_user
 queuePassword: queue
