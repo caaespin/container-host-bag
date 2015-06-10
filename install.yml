@@ -90,3 +90,7 @@
   roles:
     - { role: arch_3 }
 
+- hosts: master
+  roles:
+    - { role: test, when: test_workflows is defined and test_workflows == true }
+
