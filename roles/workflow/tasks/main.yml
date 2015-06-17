@@ -24,7 +24,7 @@
  # note: zip may already have been cleaned up, this is why we're ignoring errors
 - name: Setup bundle permissions
   file: path={{ target_workflow_path }}/{{ item }}.zip owner={{ user_name }} group={{ user_name }}
-  when: workflows_downloaded.changed
+  when:  '"{{ item }}" not in provisioned_bundles.stdout'
   with_items: workflows
     
 - name: Get seqware jar to unzip workflows
