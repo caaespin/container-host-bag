@@ -1,7 +1,8 @@
 ---
 # Ensure the docker service is running
-- name: Ensure docker service is running
-  service: name=docker state=restarted
+- name: Ensure docker service is running before attempting a test
+  sudo: true
+  shell: service docker restart
 
 # Run the workflow with it's internal default INI as a test-mode.
 - name: Run workflows in testmode
