@@ -1,6 +1,12 @@
 ---
+# Ensure the docker service is running
+- name: Ensure docker service is running before attempting a test
+  sudo: true
+  shell: service docker restart
+
 # Run the workflow with it's internal default INI as a test-mode.
-- name: Run {{ item }} test
+- name: Run workflows in testmode
+  sudo: true
   shell: docker run --rm -h master -t -v /var/run/docker.sock:/var/run/docker.sock  -v /datastore:/datastore -v /workflows/{{ item }}:/workflow -i pancancer/seqware_whitestar_pancancer:1.1.1 seqware bundle launch --dir /workflow --no-metadata
   with_items: "{{ workflows }}"
 
