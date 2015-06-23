@@ -92,5 +92,5 @@
 
 - hosts: master
   roles:
-    - { role: test, when: test_workflows is defined and test_workflows == true }
+    - { role: test, when: test_workflows is defined and test_workflows }
 
