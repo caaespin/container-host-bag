@@ -1,0 +1,5 @@
+---
+
+- name: Copy over bash profile
+  copy: src=roles/common/files/bashrc dest=/home/ubuntu/.bashrc owner=ubuntu
+
