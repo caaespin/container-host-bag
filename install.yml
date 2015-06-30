@@ -30,7 +30,11 @@
   tasks:
   - name: Determine number of hosts in fugly way 
     include: roles/common/tasks/determine_num_hosts.yml
-     
+
+- hosts: master
+  roles:
+    - { role: common }
+    
 - hosts: master:worker 
   sudo: True
   vars:
