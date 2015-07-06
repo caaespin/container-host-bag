@@ -15,14 +15,14 @@
   debug: var={{ queueHost }}
 
 - name: Template workerConfig
-  template: src=../templates/workerConfig.j2 dest=/home/ubuntu/workerConfig.ini
+  template: src=../templates/workerConfig.j2 dest=/home/ubuntu/workerConfig.ini owner=ubuntu
 
 - name: Create .seqware directory
-  file: path=/home/ubuntu/.seqware state=directory
+  file: path=/home/ubuntu/.seqware state=directory owner=ubuntu
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
-- name: Template custom seqware settings
-  cp: src=../files/seqware_settings.ini dest/home/ubuntu/.seqware/settings
+- name: Copy base custom seqware settings
+  copy: src=../files/seqware_settings.ini dest/home/ubuntu/.seqware/settings owner=ubuntu
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
 - name: Run worker as daemon
