@@ -22,7 +22,7 @@
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
 - name: Copy base custom seqware settings
-  copy: src=../files/seqware_settings.ini dest/home/ubuntu/.seqware/settings owner=ubuntu
+  copy: src=../files/seqware_settings.ini dest=/home/ubuntu/.seqware/settings owner=ubuntu
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
 - name: Run worker as daemon
