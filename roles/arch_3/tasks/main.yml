@@ -25,8 +25,8 @@
   copy: src=../files/seqware_settings.ini dest=/home/ubuntu/.seqware/settings owner=ubuntu
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
-- name: Uncomment the custom seqware settings, *IF* you've requested that.
-  replace: dest=/home/ubuntu/.seqware/settings regexp='^#seqware-(.*)$' replace='seqware-\1' backup=yes
+- name: Uncomment the custom seqware settings, IF you've requested that.
+  replace: dest=/home/ubuntu/workerConfig.ini regexp='^(\#seqware-)(.*)$' replace='seqware-\2' backup=yes owner=ubuntu
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
 - name: Run worker as daemon
