@@ -5,9 +5,13 @@ rabbitMQUser={{ queueUser }}
 rabbitMQPass={{ queuePassword }}
 
 [worker]
-heartbeatRate=2.5
-preworkerSleep=2
-postworkerSleep=2
+heartbeatRate=60
+preworkerSleep=5
+postworkerSleep=5
 max-runs=1
 hostUserName={{ hostUser }}
-
+endless=false
+# If you do not specify an engine, the whitestar engine will be used by default.
+#seqware-engine={{ seqware_engine }}
+# Only enable seqware-settings-file if you actually have one.
+#seqware-settings-file=/home/ubuntu/custom-seqware.settings

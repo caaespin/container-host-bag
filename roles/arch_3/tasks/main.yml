@@ -17,6 +17,14 @@
 - name: Template workerConfig
   template: src=../templates/workerConfig.j2 dest=/home/ubuntu/workerConfig.ini
 
+- name: Create .seqware directory
+  file: path=/home/ubuntu/.seqware state=directory
+  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
+
+- name: Template custom seqware settings
+  cp: src=../files/seqware_settings.ini dest/home/ubuntu/.seqware/settings
+  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
+
 - name: Run worker as daemon
   sudo: true
   shell: chdir=/home/ubuntu nohup bash /home/ubuntu/run_worker_daemon.sh &
