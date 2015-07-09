@@ -2,9 +2,6 @@
 - name: Get Architecture3 jar file
   get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/cancer/collaboratory/pancancer-arch-3/{{ pancancer_arch3_version }}/pancancer-arch-3-{{ pancancer_arch3_version }}.jar dest=/home/ubuntu/pancancer-arch-3-{{ pancancer_arch3_version }}.jar
 
-- name: Get Architecture3 Reporting jar file
-  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/cancer/collaboratory/pancancer-reporting/{{ pancancer_arch3_version }}/pancancer-reporting-{{ pancancer_arch3_version }}.jar dest=/home/ubuntu/pancancer-reporting-{{ pancancer_arch3_version }}.jar
-
 - name: Get kill-worker script
   template: src=kill_worker_daemon.j2 dest=/home/ubuntu/kill_worker_daemon.sh
 
