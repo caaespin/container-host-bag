@@ -6,11 +6,11 @@
     - python
 
 - name: Download get-pip
-  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/tmp/get-pip.py
+  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/ubuntu/downloads/get-pip.py
 
 - name: Install pip
   sudo: True
-  shell: python /tmp/get-pip.py
+  shell: python /home/ubuntu/downloads/get-pip.py
 
 - name: Install docker-py
   sudo: True
@@ -26,13 +26,14 @@
 
 - name: Copy over aws config
   sudo_user: 'ubuntu'
-  template: src=config.j2 dest=/home/ubuntu/.aws/config 
+  template: src=config.j2 dest=/home/ubuntu/.aws/config
 
-- name: Copy over DKFZ image 
+- name: Copy over DKFZ image
   sudo_user: 'ubuntu'
-  shell: creates=/home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar aws s3 cp s3://oicr.docker.private.images/dkfz_dockered_workflows_1.0.132-2.tar /home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar 
+  shell: creates=/home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar aws s3 cp s3://oicr.docker.private.images/dkfz_dockered_workflows_1.0.132-2.tar /home/ubuntu/dkfz_dockered_workflows_1.0.132-2.tar
   register: copy_over_dkfz_images
-  
+  #TODO: remove aws credentials after this has completed
+
 - name: Get docker container seqware_whitestar
   docker:
     image: seqware/seqware_whitestar:{{ seqware_version }}
