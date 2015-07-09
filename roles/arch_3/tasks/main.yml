@@ -6,16 +6,16 @@
   get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/cancer/collaboratory/pancancer-reporting/{{ pancancer_arch3_version }}/pancancer-reporting-{{ pancancer_arch3_version }}.jar dest=/home/ubuntu/pancancer-reporting-{{ pancancer_arch3_version }}.jar
 
 - name: Get kill-worker script
-  get_url: url=https://raw.githubusercontent.com/CancerCollaboratory/sandbox/{{ pancancer_arch3_version }}/pancancer-arch-3/scripts/kill_worker_daemon.sh dest=/home/ubuntu/kill_worker_daemon.sh
+  template: src=kill_worker_daemon.j2 dest=/home/ubuntu/kill_worker_daemon.sh
 
 - name: Get run-worker script
-  get_url: url=https://raw.githubusercontent.com/CancerCollaboratory/sandbox/{{ pancancer_arch3_version }}/pancancer-arch-3/scripts/run_worker_daemon.sh dest=/home/ubuntu/run_worker_daemon.sh
+  template: src=run_worker_daemon.j2 dest=/home/ubuntu/run_worker_daemon.sh
 
 - name: queueHost is
   debug: var={{ queueHost }}
 
 - name: Template workerConfig
-  template: src=../templates/workerConfig.j2 dest=/home/ubuntu/workerConfig.ini owner=ubuntu
+  template: src=workerConfig.j2 dest=/home/ubuntu/workerConfig.ini owner=ubuntu
 
 - name: Create .seqware directory
   file: path=/home/ubuntu/.seqware state=directory owner=ubuntu
