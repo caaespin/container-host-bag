@@ -8,7 +8,7 @@
     "Workflow_Bundle_BWA_2.6.1_SeqWare_1.1.0-alpha.5"
   ],
   "install_workflow": "true",
-  "test_workflow": "true",
+  "test_workflows": "true",
   "queueHost": "localhost",
   "queueName": "pancancer_arch_3",
   "lvm_device_whitelist": "/dev/xvdb",
