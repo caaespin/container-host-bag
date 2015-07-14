@@ -5,3 +5,4 @@
 queueUser: queue_user
 queuePassword: queue
 hostUser: ubuntu
+seqware_engine: whitestar

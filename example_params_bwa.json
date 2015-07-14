@@ -1,15 +1,19 @@
 {
- "SENSU_SERVER_IP_ADDRESS": "localhost",
- "aws_key":"FOOBAR",
- "aws_secret_key":"FOOBAR",
- "seqware_version":"1.1.1",
- "workflow_name":"Workflow_Bundle_BWA ",
- "workflows":["Workflow_Bundle_BWA_2.6.1_SeqWare_1.1.0-alpha.5"],
- "install_workflow":"true",
- "test_workflow":"true",
- "queueHost":"localhost",
- "queueName":"pancancer_arch_3",
- "lvm_device_whitelist" : "/dev/xvdb",
- "single_node_lvm" : true,
- "pancancer_arch3_version" : "1.1-alpha.0"
+  "SENSU_SERVER_IP_ADDRESS": "localhost",
+  "aws_key": "FOOBAR",
+  "aws_secret_key": "FOOBAR",
+  "seqware_version": "1.1.1",
+  "workflow_name": "Workflow_Bundle_BWA ",
+  "workflows": [
+    "Workflow_Bundle_BWA_2.6.1_SeqWare_1.1.0-alpha.5"
+  ],
+  "install_workflow": "true",
+  "test_workflows": "true",
+  "queueHost": "localhost",
+  "queueName": "pancancer_arch_3",
+  "lvm_device_whitelist": "/dev/xvdb",
+  "single_node_lvm": true,
+  "pancancer_arch3_version": "1.1-alpha.0",
+  "seqware_engine": "whitestar",
+  "seqware_use_custom_settings": false
 }

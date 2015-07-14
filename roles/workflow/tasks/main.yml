@@ -6,27 +6,21 @@
   register: provisioned_bundles
   changed_when: false
 
-  # note we need to override the temporary working directory because this bundle is just too big
-  # need to use absolute paths, go figure
-  # TODO: Use get_url instead of "shell: wget" here.
 - name: Download workflows
   sudo_user: "{{ user_name }}"
-#  environment:
-#    TMPDIR: /mnt/home/{{ user_name }}
-  get_url: url=http://s3.amazonaws.com/oicr.workflow.bundles/released-bundles/{{ item }}.zip dest={{ target_workflow_path }}/{{ item }}.zip
-#  args:
-#    chdir: "{{ target_workflow_path }}"
-#    creates: "{{ target_workflow_path }}/{{ item }}.zip"
+  get_url: url=http://s3.amazonaws.com/oicr.workflow.bundles/released-bundles/{{ item }}.zip dest={{ target_workflow_path }}/{{ item }}.zip timeout=30
   when: '"{{ item }}" not in provisioned_bundles.stdout'
   register: workflows_downloaded
   with_items: workflows
-    
+  retries: 5
+  delay: 15
+
  # note: zip may already have been cleaned up, this is why we're ignoring errors
 - name: Setup bundle permissions
   file: path={{ target_workflow_path }}/{{ item }}.zip owner={{ user_name }} group={{ user_name }}
   when:  '"{{ item }}" not in provisioned_bundles.stdout'
   with_items: workflows
-    
+
 - name: Get seqware jar to unzip workflows
   get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/seqware-release/com/github/seqware/seqware-distribution/{{ seqware_version }}/seqware-distribution-{{ seqware_version }}-full.jar dest=/workflows/seqware-distribution-{{ seqware_version }}-full.jar
 
