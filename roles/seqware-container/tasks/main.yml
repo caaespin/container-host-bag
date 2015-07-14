@@ -1,9 +1,9 @@
---- 
+---
 - name: Get pip installer
-  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/tmp/get-pip.py
+  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/ubuntu/downloads/get-pip.py
 
 - name: Install pip
-  command: python /tmp/get-pip.py
+  command: python /home/ubuntu/downloads/get-pip.py
 
 # fixed to version 1.1.0 due to a bug (2015-05-07, SolomonShorser)
 - name: Install docker-py
@@ -12,14 +12,14 @@
 # This file is used for installing a seqware container
 - name: Install seqware_whitestar Docker container for pancancer
   docker:
-    image: pancancer/seqware_whitestar_pancancer:{{ seqware_version }} 
-    pull: missing 
+    image: pancancer/seqware_whitestar_pancancer:{{ seqware_version }}
+    pull: missing
 
 # This file is used for installing a seqware container
 - name: Install seqware_whitestar Docker container
   docker:
-    image: seqware/seqware_whitestar:{{ seqware_version }} 
-    pull: missing 
+    image: seqware/seqware_whitestar:{{ seqware_version }}
+    pull: missing
 
 - name: Create workflows directory
   sudo: yes
