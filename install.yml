@@ -1,9 +1,9 @@
---- 
+---
 # file: install.yml
-# This file is used for installing a container host 
-   
+# This file is used for installing a container host
+
 # Not sure why, but I needed this to create a /etc/hosts that actually works with the Ubuntu image here on openstack
-- hosts: master:worker 
+- hosts: master:worker
   sudo: True
   # Idempotent way to build a /etc/hosts file with Ansible using your Ansible hosts inventory for a source.
   # Will include all hosts the playbook is run on.
@@ -23,19 +23,21 @@
     shell: umount /mnt
     register: umount_output
     ignore_errors: yes
+  - name: Create directory for downloads
+    file: path=/home/ubuntu/downloads owner=ubuntu group=ubuntu state=directory
 
   # This is a super-fugly way of determining the number of hosts in total, Ansible bug referenced
 - hosts: master:worker
   sudo: True
   tasks:
-  - name: Determine number of hosts in fugly way 
+  - name: Determine number of hosts in fugly way
     include: roles/common/tasks/determine_num_hosts.yml
 
 - hosts: master
   roles:
     - { role: common }
-    
-- hosts: master:worker 
+
+- hosts: master:worker
   sudo: True
   vars:
       single_node_lvm: True
@@ -47,11 +49,11 @@
 - hosts: master:worker
   sudo: True
   tasks:
-  - name: Make sure ubuntu owns the datastore 
-    file: path=/datastore owner=ubuntu group=ubuntu state=directory 
+  - name: Make sure ubuntu owns the datastore
+    file: path=/datastore owner=ubuntu group=ubuntu state=directory
 
 
-- hosts: master:worker 
+- hosts: master:worker
   sudo: True
   vars:
    swap_on: False
@@ -75,12 +77,12 @@
       with_fileglob:
         - /home/{{ user_name }}/.gnos/*
 
-- hosts: master 
+- hosts: master
   sudo: True
   vars:
     installed_workflows_path: /workflows
     target_workflow_path: /workflows
-    user_name: ubuntu 
+    user_name: ubuntu
   roles:
     - { role: workflow, when: workflows is defined }
 
@@ -97,4 +99,3 @@
 - hosts: master
   roles:
     - { role: test, when: test_workflows is defined and test_workflows }
-
