@@ -1,0 +1,38 @@
+---
+
+- name: Pull docker containers from dockerhub
+  docker:
+    image: {{ item.image_name }}
+  with_items: containers
+
+- name: Copy over AWS config
+  sudo_user: 'ubuntu'
+  template: src=config.j2 dest=/home/ubuntu/.aws/config
+  when: s3_containers is defined
+
+- name: Get docker images from S3
+  sudo_user: 'ubuntu'
+  shell: creates=/home/ubuntu/{{ item.name }}.tar aws s3 cp s3://{{ item.url }} /home/ubuntu/{{ item.name }}.tar
+  register: copy_over_private_image
+  with_items: s3_containers
+  when: s3_containers is defined
+
+- name: Remove AWS config, now that objects have been downloaded.
+  file: path=/home/ubuntu/.aws/config state=absent
+  when: s3_containers is defined
+
+- name: Load Private images
+  shell: docker load -i /home/ubuntu/{{ item.name }}.tar
+  when: copy_over_private_image.changed and s3_containers is defined
+  with_items: s3_containers
+
+- name: Get HTTP containers
+  get_url: url={{ item.url }} dest=/home/ubuntu/{{ item.name }}.tar owner=ubuntu
+  when: http_containers is defined
+  with_items: http_containers
+  register: download_http_containers
+
+- name: Install HTTP containers
+  shell: docker load -i /home/ubuntu/{{ item.name }}.tar
+  when: download_http_containers.changed
+  with_items: http_containers

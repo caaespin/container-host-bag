@@ -6,14 +6,34 @@
   register: provisioned_bundles
   changed_when: false
 
-- name: Download workflows
+- name: Download workflows (HTTP)
   sudo_user: "{{ user_name }}"
-  get_url: url=http://s3.amazonaws.com/oicr.workflow.bundles/released-bundles/{{ item }}.zip dest={{ target_workflow_path }}/{{ item }}.zip timeout=30
-  when: '"{{ item }}" not in provisioned_bundles.stdout'
+#  get_url: url=http://s3.amazonaws.com/oicr.workflow.bundles/released-bundles/{{ item }}.zip dest={{ target_workflow_path }}/{{ item }}.zip timeout=30
+#  when: '"{{ item }}" not in provisioned_bundles.stdout'
+  get_url: url={{ item.url }} dest={{ target_workflow_path }}/{{ item }}.zip timeout=60
   register: workflows_downloaded
-  with_items: workflows
+  when: '"{{ item.name }}" not in provisioned_bundles.stdout and http_workflows is defined'
+  with_items: http_workflows
   retries: 5
   delay: 15
+
+- name: Copy over AWS config
+  sudo_user: 'ubuntu'
+  template: src=config.j2 dest=/home/ubuntu/.aws/config
+  when: s3_containers is defined
+
+- name: Download workflows (S3)
+  sudo_user: "{{ user_name }}"
+  shell: creates={{ target_workflow_path }}/{{ item }}.zip aws s3 cp s3://{{ item.url }} {{ target_workflow_path }}/{{ item }}.zip.zip
+  register: workflows_downloaded
+  when: '"{{ item.name }}" not in provisioned_bundles.stdout and http_workflows is defined'
+  with_items: s3_workflows
+  retries: 5
+  delay: 15
+
+- name: Remove AWS config, now that objects have been downloaded.
+  file: path=/home/ubuntu/.aws/config state=absent
+  when: s3_containers is defined
 
  # note: zip may already have been cleaned up, this is why we're ignoring errors
 - name: Setup bundle permissions
