@@ -11,6 +11,15 @@
 - name: queueHost is
   debug: var={{ queueHost }}
 
+# The "endless" flag for the worker is not a true/false, it's "--endless" or "".
+- name: Conditionally turn endless_worker_flag on
+  set_fact: endless_worker_flag=" --endless "
+  when: endless_worker is defined and endless_worker
+
+- name: Conditionally turn endless_worker_flag off
+  set_fact: endless_worker_flag=""
+  when: endless_worker is not defined or not endless_worker
+
 - name: Template workerConfig
   template: src=workerConfig.j2 dest=/home/ubuntu/workerConfig.ini owner=ubuntu
 
