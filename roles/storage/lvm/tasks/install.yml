@@ -15,6 +15,11 @@
     - ecryptfs-utils 
     - xfsprogs
 
+- name: Storage | Remove existing temporary drive (Azure)
+  sudo: true
+  command: sudo parted --script /dev/sdb rm 1
+  when: azure
+
 - name: Storage | Create a volume group white listed devices
   lvg: vg=volume_group pvs={{ lvm_device_whitelist }} state=present vg_options=
   register: lvm_volume_created
