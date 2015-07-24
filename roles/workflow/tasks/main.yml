@@ -13,7 +13,7 @@
   get_url: url={{ item.value.url }} dest={{ target_workflow_path }}/{{ item.value.name }}.zip timeout=60
   register: workflows_downloaded
   when: '"{{ item.value.name }}" not in provisioned_bundles.stdout and http_workflows is defined'
-  with_dict: http_workflows
+  with_dict: http_workflows | default({})
   retries: 5
   delay: 15
 
@@ -27,10 +27,10 @@
 
 - name: Download workflows (S3)
   sudo_user: "{{ user_name }}"
-  shell: creates={{ target_workflow_path }}/{{ item.value.name }}.zip aws s3 cp s3://{{ item.value.url }} {{ target_workflow_path }}/{{ item.value.name }}.zip.zip
+  shell: creates={{ target_workflow_path }}/{{ item.value.name }}.zip aws s3 cp {{ item.value.url }} {{ target_workflow_path }}/{{ item.value.name }}.zip
   register: workflows_downloaded
-  when: '"{{ item.name }}" not in provisioned_bundles.stdout and s3_workflows is defined'
-  with_dict: s3_workflows
+  when: '"{{ item.value.name }}" not in provisioned_bundles.stdout and s3_workflows is defined'
+  with_dict: s3_workflows | default({})
   retries: 5
   delay: 15
 
@@ -44,35 +44,35 @@
 # TODO: Some of these plays are copy-pasted (ugh!) with different hashes. Need to find a more elegant way to do this.
 
  # note: zip may already have been cleaned up, this is why we're ignoring errors
-- name: Setup bundle permissions
+- name: Setup permissions on bundles that came from HTTP
   file: path={{ target_workflow_path }}/{{ item.value.name }}.zip owner={{ user_name }} group={{ user_name }}
-  when:  '"{{ item }}" not in provisioned_bundles.stdout'
-  with_dict: http_workflows
+  when:  '"{{ item.value.name }}" not in provisioned_bundles.stdout'
+  with_dict: http_workflows | default({})
 
-- name: Setup bundle permissions
+- name: Setup permissions on bundles that came from S3
   file: path={{ target_workflow_path }}/{{ item.value.name }}.zip owner={{ user_name }} group={{ user_name }}
-  when:  '"{{ item }}" not in provisioned_bundles.stdout'
-  with_dict: s3_workflows
+  when:  '"{{ item.value.name }}" not in provisioned_bundles.stdout'
+  with_dict: s3_workflows | default({})
 
 - name: Get seqware jar to unzip workflows
   get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/seqware-release/com/github/seqware/seqware-distribution/{{ seqware_version }}/seqware-distribution-{{ seqware_version }}-full.jar dest=/workflows/seqware-distribution-{{ seqware_version }}-full.jar
 
-- name: Unzip workflows
+- name: Unzip workflows that came from HTTP
   shell: java -cp /workflows/seqware-distribution-{{ seqware_version }}-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip {{ target_workflow_path }}/{{ item.value.name }}.zip --output-dir {{ target_workflow_path }}/{{ item.value.name }}
   args:
     chdir: /workflows
-  with_dict: http_workflows
+  with_dict: http_workflows | default({})
 
-- name: Unzip workflows
+- name: Unzip workflows the came from S3
   shell: java -cp /workflows/seqware-distribution-{{ seqware_version }}-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip {{ target_workflow_path }}/{{ item.value.name }}.zip --output-dir {{ target_workflow_path }}/{{ item.value.name }}
   args:
     chdir: /workflows
-  with_dict: s3_workflows
+  with_dict: s3_workflows | default({})
 
-- name: Remove workflow bundles
+- name: Remove workflow bundles that came from HTTP
   command: rm {{ target_workflow_path }}/{{ item.value.name }}.zip removes={{ target_workflow_path }}/{{ item.value.name }}.zip
-  with_items: http_workflows
+  with_dict: http_workflows | default({})
 
-- name: Remove workflow bundles
+- name: Remove workflow bundles that came from S3
   command: rm {{ target_workflow_path }}/{{ item.value.name }}.zip removes={{ target_workflow_path }}/{{ item.value.name }}.zip
-  with_items: s3_workflows
+  with_dict: s3_workflows | default({})

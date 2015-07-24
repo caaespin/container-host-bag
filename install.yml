@@ -89,7 +89,7 @@
 - hosts: master
   sudo: true
   roles:
-    - { roles: containers, when containers is defined or http_containers is defined or s3_containers is defined }
+    - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
 
 # Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the arch_3 stuff...
 - hosts: master
