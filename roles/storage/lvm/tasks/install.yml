@@ -17,7 +17,7 @@
 
 - name: Storage | Remove existing temporary drive (Azure)
   sudo: true
-  command: sudo parted --script /dev/sdb rm 1 || true
+  shell: sudo parted --script /dev/sdb rm 1 || true
   when: azure
 
 - name: Storage | Create a volume group white listed devices
