@@ -10,46 +10,69 @@
   sudo_user: "{{ user_name }}"
 #  get_url: url=http://s3.amazonaws.com/oicr.workflow.bundles/released-bundles/{{ item }}.zip dest={{ target_workflow_path }}/{{ item }}.zip timeout=30
 #  when: '"{{ item }}" not in provisioned_bundles.stdout'
-  get_url: url={{ item.url }} dest={{ target_workflow_path }}/{{ item }}.zip timeout=60
+  get_url: url={{ item.value.url }} dest={{ target_workflow_path }}/{{ item.value.name }}.zip timeout=60
   register: workflows_downloaded
-  when: '"{{ item.name }}" not in provisioned_bundles.stdout and http_workflows is defined'
-  with_items: http_workflows
+  when: '"{{ item.value.name }}" not in provisioned_bundles.stdout and http_workflows is defined'
+  with_dict: http_workflows
   retries: 5
   delay: 15
 
 - name: Copy over AWS config
   sudo_user: 'ubuntu'
-  template: src=config.j2 dest=/home/ubuntu/.aws/config
+  copy: src=/home/ubuntu/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
   when: s3_containers is defined
+  with_items:
+    - config
+    - credentials
 
 - name: Download workflows (S3)
   sudo_user: "{{ user_name }}"
-  shell: creates={{ target_workflow_path }}/{{ item }}.zip aws s3 cp s3://{{ item.url }} {{ target_workflow_path }}/{{ item }}.zip.zip
+  shell: creates={{ target_workflow_path }}/{{ item.value.name }}.zip aws s3 cp s3://{{ item.value.url }} {{ target_workflow_path }}/{{ item.value.name }}.zip.zip
   register: workflows_downloaded
-  when: '"{{ item.name }}" not in provisioned_bundles.stdout and http_workflows is defined'
-  with_items: s3_workflows
+  when: '"{{ item.name }}" not in provisioned_bundles.stdout and s3_workflows is defined'
+  with_dict: s3_workflows
   retries: 5
   delay: 15
 
 - name: Remove AWS config, now that objects have been downloaded.
-  file: path=/home/ubuntu/.aws/config state=absent
+  file: path=/home/ubuntu/.aws/{{ item }} state=absent
   when: s3_containers is defined
+  with_items:
+    - config
+    - credentials
+
+# TODO: Some of these plays are copy-pasted (ugh!) with different hashes. Need to find a more elegant way to do this.
 
  # note: zip may already have been cleaned up, this is why we're ignoring errors
 - name: Setup bundle permissions
-  file: path={{ target_workflow_path }}/{{ item }}.zip owner={{ user_name }} group={{ user_name }}
+  file: path={{ target_workflow_path }}/{{ item.value.name }}.zip owner={{ user_name }} group={{ user_name }}
   when:  '"{{ item }}" not in provisioned_bundles.stdout'
-  with_items: workflows
+  with_dict: http_workflows
+
+- name: Setup bundle permissions
+  file: path={{ target_workflow_path }}/{{ item.value.name }}.zip owner={{ user_name }} group={{ user_name }}
+  when:  '"{{ item }}" not in provisioned_bundles.stdout'
+  with_dict: s3_workflows
 
 - name: Get seqware jar to unzip workflows
   get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/seqware-release/com/github/seqware/seqware-distribution/{{ seqware_version }}/seqware-distribution-{{ seqware_version }}-full.jar dest=/workflows/seqware-distribution-{{ seqware_version }}-full.jar
 
 - name: Unzip workflows
-  shell: java -cp /workflows/seqware-distribution-{{ seqware_version }}-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip {{ target_workflow_path }}/{{ item }}.zip --output-dir {{ target_workflow_path }}/{{ item }}
+  shell: java -cp /workflows/seqware-distribution-{{ seqware_version }}-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip {{ target_workflow_path }}/{{ item.value.name }}.zip --output-dir {{ target_workflow_path }}/{{ item.value.name }}
   args:
     chdir: /workflows
-  with_items: workflows
+  with_dict: http_workflows
+
+- name: Unzip workflows
+  shell: java -cp /workflows/seqware-distribution-{{ seqware_version }}-full.jar net.sourceforge.seqware.pipeline.tools.UnZip --input-zip {{ target_workflow_path }}/{{ item.value.name }}.zip --output-dir {{ target_workflow_path }}/{{ item.value.name }}
+  args:
+    chdir: /workflows
+  with_dict: s3_workflows
 
 - name: Remove workflow bundles
-  command: rm {{ target_workflow_path }}/{{ item }}.zip removes={{ target_workflow_path }}/{{ item }}.zip
-  with_items: workflows
+  command: rm {{ target_workflow_path }}/{{ item.value.name }}.zip removes={{ target_workflow_path }}/{{ item.value.name }}.zip
+  with_items: http_workflows
+
+- name: Remove workflow bundles
+  command: rm {{ target_workflow_path }}/{{ item.value.name }}.zip removes={{ target_workflow_path }}/{{ item.value.name }}.zip
+  with_items: s3_workflows

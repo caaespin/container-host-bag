@@ -2,15 +2,6 @@
 - name: Get Architecture3 jar file
   get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/cancer/collaboratory/pancancer-arch-3/{{ pancancer_arch3_version }}/pancancer-arch-3-{{ pancancer_arch3_version }}.jar dest=/home/ubuntu/pancancer-arch-3-{{ pancancer_arch3_version }}.jar
 
-- name: Get kill-worker script
-  template: src=kill_worker_daemon.j2 dest=/home/ubuntu/kill_worker_daemon.sh
-
-- name: Get run-worker script
-  template: src=run_worker_daemon.j2 dest=/home/ubuntu/run_worker_daemon.sh
-
-- name: queueHost is
-  debug: var={{ queueHost }}
-
 # The "endless" flag for the worker is not a true/false, it's "--endless" or "".
 - name: Conditionally turn endless_worker_flag on
   set_fact: endless_worker_flag=" --endless "
@@ -19,6 +10,15 @@
 - name: Conditionally turn endless_worker_flag off
   set_fact: endless_worker_flag=""
   when: endless_worker is not defined or not endless_worker
+
+- name: Get kill-worker script
+  template: src=kill_worker_daemon.j2 dest=/home/ubuntu/kill_worker_daemon.sh
+
+- name: Get run-worker script
+  template: src=run_worker_daemon.j2 dest=/home/ubuntu/run_worker_daemon.sh
+
+- name: queueHost is
+  debug: var={{ queueHost }}
 
 - name: Template workerConfig
   template: src=workerConfig.j2 dest=/home/ubuntu/workerConfig.ini owner=ubuntu
