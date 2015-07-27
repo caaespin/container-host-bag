@@ -84,7 +84,12 @@
     target_workflow_path: /workflows
     user_name: ubuntu
   roles:
-    - { role: workflow, when: workflows is defined }
+    - { role: workflow, when: http_workflows is defined or s3_workflows is defined }
+
+- hosts: master
+  sudo: true
+  roles:
+    - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
 
 # Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the arch_3 stuff...
 - hosts: master

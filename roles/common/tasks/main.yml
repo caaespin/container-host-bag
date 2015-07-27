@@ -3,3 +3,27 @@
 - name: Copy over bash profile
   copy: src=roles/common/files/bashrc dest=/home/ubuntu/.bashrc owner=ubuntu
 
+- name: Install dependencies for docker container installation
+  sudo: true
+  apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
+  with_items:
+    - python
+
+- name: Download get-pip
+  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/ubuntu/downloads/get-pip.py
+
+- name: Install pip
+  sudo: True
+  shell: python /home/ubuntu/downloads/get-pip.py
+
+- name: Install docker-py
+  sudo: True
+  pip: name=docker-py
+
+- name: Install AWS CLI
+  sudo: True
+  pip: name=awscli
+
+- name: Setup aws config directory
+  sudo: true
+  file: state=directory path=/home/ubuntu/.aws owner=ubuntu

@@ -1,0 +1,44 @@
+---
+
+- name: Pull docker containers from dockerhub
+  docker:
+    image: "{{ item.value.image_name }}"
+  with_dict: containers | default({})
+
+- name: Copy over AWS config/credentials files
+  sudo_user: 'ubuntu'
+  copy: src=/home/ubuntun/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
+  when: s3_containers is defined
+  with_items:
+    - config
+    - credentials
+
+- name: Get docker images from S3
+  sudo_user: 'ubuntu'
+  shell: creates=/home/ubuntu/downloads/{{ item.value.name }}.tar aws s3 cp {{ item.value.url }} /home/ubuntu/downloads/{{ item.value.name }}.tar
+  register: copy_over_private_image
+  with_dict: s3_containers | default({})
+  when: s3_containers is defined
+
+- name: Remove AWS config and credentials, now that objects have been downloaded.
+  file: path=/home/ubuntu/.aws/{{ item }} state=absent
+  when: s3_containers is defined
+  with_items:
+    - config
+    - credentials
+
+- name: Load Private images
+  shell: docker load -i /home/ubuntu/downloads/{{ item.value.name }}.tar
+  when: copy_over_private_image.changed and s3_containers is defined
+  with_dict: s3_containers | default({})
+
+- name: Get HTTP containers
+  get_url: url={{ item.value.url }} dest=/home/ubuntu/downloads/{{ item.value.name }}.tar owner=ubuntu
+  when: http_containers is defined
+  with_dict: http_containers | default({})
+  register: download_http_containers
+
+- name: Install HTTP containers
+  shell: docker load -i /home/ubuntu/downloads/{{ item.value.name }}.tar
+  when:  http_containers is defined and  download_http_containers.changed
+  with_dict: http_containers | default({})

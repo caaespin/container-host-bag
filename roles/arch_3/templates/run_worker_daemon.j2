@@ -20,7 +20,7 @@ sudo touch $LOG_FILE
 sudo chown $USER $LOG_FILE
 
 # the worker now detects its own id from openstack or AWS metadata (cloud-init)
-nohup java -cp pancancer-arch-3-*.jar info.pancancer.arch3.worker.Worker --uuid {{ ansible_hostname }} --config workerConfig.ini --pidFile $PID_FILE  </dev/null > $LOG_FILE 2>&1 &
+nohup java -cp pancancer-arch-3-*.jar info.pancancer.arch3.worker.Worker --uuid {{ ansible_hostname }} --config workerConfig.ini --pidFile $PID_FILE {{ endless_worker_flag }}  </dev/null > $LOG_FILE 2>&1 &
 PID=$!
 echo $PID > $PID_FILE
 echo "PID of worker daemon is $PID"

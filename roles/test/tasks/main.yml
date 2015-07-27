@@ -5,8 +5,12 @@
   shell: service docker restart
 
 # Run the workflow with it's internal default INI as a test-mode.
-- name: Run workflows in testmode
+- name: Run workflows (from HTTP) in testmode
   sudo: true
-  shell: docker run --rm -h master -t -v /var/run/docker.sock:/var/run/docker.sock  -v /datastore:/datastore -v /workflows/{{ item }}:/workflow -i pancancer/seqware_whitestar_pancancer:1.1.1 seqware bundle launch --dir /workflow --no-metadata
-  with_items: "{{ workflows }}"
+  shell: docker run --rm -h master -t -v /var/run/docker.sock:/var/run/docker.sock  -v /datastore:/datastore -v /workflows/{{ item.value.name }}:/workflow -i pancancer/seqware_whitestar_pancancer:1.1.1 seqware bundle launch --dir /workflow --no-metadata
+  with_dict: http_workflows | default({})
 
+- name: Run workflows (from S3) in testmode
+  sudo: true
+  shell: docker run --rm -h master -t -v /var/run/docker.sock:/var/run/docker.sock  -v /datastore:/datastore -v /workflows/{{ item.value.name }}:/workflow -i pancancer/seqware_whitestar_pancancer:1.1.1 seqware bundle launch --dir /workflow --no-metadata
+  with_dict: s3_workflows | default({})
