@@ -33,6 +33,25 @@
   ignore_errors: yes  
   when: azure
 
+- name: Storage | WTF, Unmount the temporary drive first
+  sudo: true
+  shell: umount /mnt
+  ignore_errors: yes  
+  when: azure
+
+- name: Storage | WTF, Wipe them out. All of them. Again.
+  sudo: true
+  shell: dd if=/dev/zero of=/dev/sdb bs=512 count=1
+  ignore_errors: yes  
+  when: azure
+
+- name: Storage | WTF, Remove existing temporary drive (Azure). Again
+  sudo: true
+  shell: parted --script /dev/sdb rm 1
+  ignore_errors: yes  
+  when: azure
+
+
 - name: Storage | Create a volume group white listed devices
   lvg: vg=volume_group pvs={{ lvm_device_whitelist }} state=present vg_options=
   register: lvm_volume_created
