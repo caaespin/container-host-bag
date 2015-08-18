@@ -15,6 +15,16 @@
     - ecryptfs-utils 
     - xfsprogs
 
+- name: Storage | Unmount the temporary drive first
+  sudo: true
+  shell: sudo umount /mnt || true
+  when: azure
+
+- name: Storage | Wipe them out. All of them. 
+  sudo: true
+  shell: sudo dd if=/dev/zero of=/dev/sdb bs=512 count=1 || true
+  when: azure
+
 - name: Storage | Remove existing temporary drive (Azure)
   sudo: true
   shell: sudo parted --script /dev/sdb rm 1 || true
