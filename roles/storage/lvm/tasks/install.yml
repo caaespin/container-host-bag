@@ -33,19 +33,19 @@
   ignore_errors: yes  
   when: azure
 
-- name: Storage | WTF, Unmount the temporary drive first
+- name: Storage | Unmount the temporary drive first. Mystery, needs to be done twice on G5 instance
   sudo: true
   shell: umount /mnt
   ignore_errors: yes  
   when: azure
 
-- name: Storage | WTF, Wipe them out. All of them. Again.
+- name: Storage | Wipe them out. All of them. Mystery, needs to be done twice on G5 instance
   sudo: true
   shell: dd if=/dev/zero of=/dev/sdb bs=512 count=1
   ignore_errors: yes  
   when: azure
 
-- name: Storage | WTF, Remove existing temporary drive (Azure). Again
+- name: Storage | Remove existing temporary drive (Azure). Mystery, needs to be done twice on G5 instance
   sudo: true
   shell: parted --script /dev/sdb rm 1
   ignore_errors: yes  
