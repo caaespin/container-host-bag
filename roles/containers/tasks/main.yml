@@ -7,7 +7,7 @@
 
 - name: Copy over AWS config/credentials files
   sudo_user: 'ubuntu'
-  copy: src=/home/ubuntun/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
+  copy: src=/home/ubuntu/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
   when: s3_containers is defined
   with_items:
     - config
