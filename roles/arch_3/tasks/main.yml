@@ -35,23 +35,32 @@
   replace: dest=/home/ubuntu/workerConfig.ini regexp='^(\#seqware-)(.*)$' replace='seqware-\2' backup=yes owner=ubuntu
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
-# AWS S3 credentials will always be in ~/.aws/config and ~/.aws/credentials.
-- name: Copy over config and credentials for S3, if workflow will be talking to S3
-  sudo_user: 'ubuntu'
-  copy: src=/home/ubuntu/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
-  when: workflow_uses_s3 is defined
-  with_items:
-    - config
-    - credentials
+- name: Check for ~/.aws/config
+  local_action: stat path=/home/ubuntu/.aws/config
+  register: stat_aws_config
 
-# If the user wants to use GNOS keys, we won't assume the names. >99.9% chance there will be one key named "gnos.pem", but if future workflows
-# allow for multiple keys, we'll need to let the user specify them.
-- name: Copy over GNOS credentials, if workflow will be talking to GNOS
+- name: Copy over config for S3, if it exists
   sudo_user: 'ubuntu'
-  copy: src=/home/ubuntu/.gnos/{{ item }} dest=/home/ubuntu/.gnos/{{ item }}
-  when: workflow_uses_gnos is defined
-  with_items: gnos_keys
+  copy: src=/home/ubuntu/.aws/config dest=/home/ubuntu/.aws/config
+  when: stat_aws_config.stat.exists==true
 
+- name: Check for ~/.aws/credentials
+  local_action: stat path=/home/ubuntu/.aws/credentials
+  register: stat_aws_creds
+
+- name: Copy over credentials for S3, if it exists
+  sudo_user: 'ubuntu'
+  copy: src=/home/ubuntu/.aws/credentials dest=/home/ubuntu/.aws/credentials
+  when: stat_aws_creds.stat.exists==true
+
+- name: Check for ~/.gnos/gnos.pem
+  local_action: stat path=/home/ubuntu/.gnos/gnos.pem
+  register: stat_gnos
+
+- name: Copy over GNOS key, if it exists
+  sudo_user: 'ubuntu'
+  copy: src=/home/ubuntu/.gnos/gnos.pem dest=/home/ubuntu/.gnos/gnos.pem
+  when: stat_gnos.stat.exists==true
 
 - name: Run worker as daemon
   sudo: true
