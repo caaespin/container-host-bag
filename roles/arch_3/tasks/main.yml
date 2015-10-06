@@ -35,6 +35,33 @@
   replace: dest=/home/ubuntu/workerConfig.ini regexp='^(\#seqware-)(.*)$' replace='seqware-\2' backup=yes owner=ubuntu
   when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
+- name: Check for ~/.aws/config
+  local_action: stat path=/home/ubuntu/.aws/config
+  register: stat_aws_config
+
+- name: Copy over config for S3, if it exists
+  sudo_user: 'ubuntu'
+  copy: src=/home/ubuntu/.aws/config dest=/home/ubuntu/.aws/config
+  when: stat_aws_config.stat.exists==true
+
+- name: Check for ~/.aws/credentials
+  local_action: stat path=/home/ubuntu/.aws/credentials
+  register: stat_aws_creds
+
+- name: Copy over credentials for S3, if it exists
+  sudo_user: 'ubuntu'
+  copy: src=/home/ubuntu/.aws/credentials dest=/home/ubuntu/.aws/credentials
+  when: stat_aws_creds.stat.exists==true
+
+- name: Check for ~/.gnos/gnos.pem
+  local_action: stat path=/home/ubuntu/.gnos/gnos.pem
+  register: stat_gnos
+
+- name: Copy over GNOS key, if it exists
+  sudo_user: 'ubuntu'
+  copy: src=/home/ubuntu/.gnos/gnos.pem dest=/home/ubuntu/.gnos/gnos.pem
+  when: stat_gnos.stat.exists==true
+
 - name: Run worker as daemon
   sudo: true
   shell: chdir=/home/ubuntu nohup bash /home/ubuntu/run_worker_daemon.sh &
