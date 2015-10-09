@@ -9,9 +9,8 @@
   sudo_user: 'ubuntu'
   copy: src=/home/ubuntu/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
   when: s3_containers is defined
-  with_items:
-    - config
-    - credentials
+  with_fileglob:
+    - *
 
 - name: Get docker images from S3
   sudo_user: 'ubuntu'
@@ -23,9 +22,9 @@
 - name: Remove AWS config and credentials, now that objects have been downloaded.
   file: path=/home/ubuntu/.aws/{{ item }} state=absent
   when: s3_containers is defined
-  with_items:
+  with_fileglob:
     - config
-    - credentials
+    - *
 
 - name: Load Private images
   shell: docker load -i /home/ubuntu/downloads/{{ item.value.name }}.tar
