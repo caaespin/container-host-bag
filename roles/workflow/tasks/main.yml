@@ -19,11 +19,10 @@
 
 - name: Copy over AWS config
   sudo_user: 'ubuntu'
-  copy: src=/home/ubuntu/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
-  when: s3_containers is defined
-  with_items:
-    - config
-    - credentials
+  copy: src={{ item }} dest={{ item }}
+  when: s3_containers is defined or s3_workflows is defined
+  with_fileglob:
+    - /home/ubuntu/.aws/*
 
 - name: Download workflows (S3)
   sudo_user: "{{ user_name }}"
@@ -35,11 +34,10 @@
   delay: 15
 
 - name: Remove AWS config, now that objects have been downloaded.
-  file: path=/home/ubuntu/.aws/{{ item }} state=absent
-  when: s3_containers is defined
-  with_items:
-    - config
-    - credentials
+  file: path={{ item }} state=absent
+  when: s3_containers is defined or s3_workflows is defined
+  with_fileglob:
+    - /home/ubuntu/.aws/*
 
 # TODO: Some of these plays are copy-pasted (ugh!) with different hashes. Need to find a more elegant way to do this.
 
