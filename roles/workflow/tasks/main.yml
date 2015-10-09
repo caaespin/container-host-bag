@@ -22,7 +22,7 @@
   copy: src=/home/ubuntu/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
   when: s3_containers is defined or s3_workflows is defined
   with_fileglob:
-    - *
+    - /home/ubuntu/.aws/*
 
 - name: Download workflows (S3)
   sudo_user: "{{ user_name }}"
@@ -37,7 +37,7 @@
   file: path=/home/ubuntu/.aws/{{ item }} state=absent
   when: s3_containers is defined or s3_workflows is defined
   with_fileglob:
-    - *
+    - /home/ubuntu/.aws/*
 
 # TODO: Some of these plays are copy-pasted (ugh!) with different hashes. Need to find a more elegant way to do this.
 
