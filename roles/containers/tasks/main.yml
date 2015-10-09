@@ -7,7 +7,7 @@
 
 - name: Copy over AWS config/credentials files
   sudo_user: 'ubuntu'
-  copy: src=/home/ubuntu/.aws/{{ item }} dest=/home/ubuntu/.aws/{{ item }}
+  copy: src={{ item }} dest={{ item }}
   when: s3_containers is defined
   with_fileglob:
     - /home/ubuntu/.aws/*
@@ -20,7 +20,7 @@
   when: s3_containers is defined
 
 - name: Remove AWS config and credentials, now that objects have been downloaded.
-  file: path=/home/ubuntu/.aws/{{ item }} state=absent
+  file: path={{ item }} state=absent
   when: s3_containers is defined
   with_fileglob:
     - /home/ubuntu/.aws/*
