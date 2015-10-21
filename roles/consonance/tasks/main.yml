@@ -1,6 +1,6 @@
 ---
 - name: Get Architecture3 jar file
-  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/cancer/collaboratory/pancancer-arch-3/{{ pancancer_arch3_version }}/pancancer-arch-3-{{ pancancer_arch3_version }}.jar dest=/home/ubuntu/pancancer-arch-3-{{ pancancer_arch3_version }}.jar
+  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/consonance/consonance-arch/{{ consonance_arch_version }}/consonance-arch-{{ consonance_arch_version }}.jar dest=/home/ubuntu/consonance-arch-{{ consonance_arch_version }}.jar
 
 # The "endless" flag for the worker is not a true/false, it's "--endless" or "".
 - name: Conditionally turn endless_worker_flag on
