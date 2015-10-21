@@ -41,6 +41,9 @@
     - /home/ubuntu/.gnos/*
     - /home/ubuntu/.aws/*
 
+- name: Install cwltool
+  pip: name=cwl-runner executable=pip2.7
+
 - name: Run worker as daemon
   sudo: true
   shell: chdir=/home/ubuntu nohup bash /home/ubuntu/run_worker_daemon.sh &
