@@ -5,10 +5,16 @@
 # Not sure why, but I needed this to create a /etc/hosts that actually works with the Ubuntu image here on openstack
 - hosts: master:worker
   sudo: True
+  tasks:
+  # Sometimes, installing docker may trigger a kernel update (though in theory, other calls to `sudo apt-get update ; sudo apt-get upgrade` could do it as well),
+  # and sometimes that kernel update runs into a grub bug which causes the whole thing to hang.
+  # George found this workaround to prevent the installation from hanging, and since, in theory, any update could trigger the problem, we're doing it
+  # *here*, as early as possible in the playbook.
+  - name: Kernel update issue workaround
+    shell: sudo chmod a-x /etc/grub.d/30_os-prober
   # Idempotent way to build a /etc/hosts file with Ansible using your Ansible hosts inventory for a source.
   # Will include all hosts the playbook is run on.
   # Inspired from http://xmeblog.blogspot.com/2013/06/ansible-dynamicaly-update-etchosts.html
-  tasks:
   - name: Build hosts file for all hosts
     lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
     when: hostvars[item].ansible_default_ipv4.address is defined and docker is not defined
