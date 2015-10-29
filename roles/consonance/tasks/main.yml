@@ -50,11 +50,20 @@
   sudo: true
   file: path=/icgc/dcc-storage/ owner=ubuntu state=directory
 
+- name: Create working directory
+  sudo: true
+  file: path=/icgc/dcc-storage/archive owner=ubuntu state=directory
+
 - name: Get file 
-  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/dcc-release/org/icgc/dcc/dcc-storage-client/{{ dcc_storage_version }}/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/
+  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/dcc-release/org/icgc/dcc/dcc-storage-client/{{ dcc_storage_version }}/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/archive
 
 - name: Unarchive the dcc tool
-  unarchive: src=/icgc/dcc-storage/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/  copy=no
+  unarchive: src=/icgc/dcc-storage/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/archive  copy=no
+
+- name: Copy files extracted files into correct location
+  command: creates=/icgc/dcc-storage/bin/dcc-storage-client "mv /icgc/dcc-storage/archive/dcc-storage-client-{{ dcc_storage_version }}/* /icgc/dcc-storage/"
+
+# end dcc-storage
 
 - name: Run worker as daemon
   sudo: true
