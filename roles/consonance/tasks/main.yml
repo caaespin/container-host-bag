@@ -54,7 +54,7 @@
   get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/dcc-release/org/icgc/dcc/dcc-storage-client/{{ dcc_storage_version }}/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/
 
 - name: Unarchive the dcc tool
-  unarchive: src=/icgc/dcc-storage/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/  
+  unarchive: src=/icgc/dcc-storage/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/  copy=no
 
 - name: Run worker as daemon
   sudo: true
