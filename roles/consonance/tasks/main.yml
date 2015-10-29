@@ -46,6 +46,10 @@
 
 # install dcc-storage
 
+- name: Create required directory
+  sudo: true
+  file: file=/icgc/dcc-storage/ owner=ubuntu state=directory
+
 - name: Unarchive the dcc tool
   unarchive: src=https://seqwaremaven.oicr.on.ca/artifactory/dcc-release/org/icgc/dcc/dcc-storage-client/{{ dcc_storage_version }}/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/  copy=no
 
