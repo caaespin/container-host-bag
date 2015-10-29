@@ -21,7 +21,7 @@ sudo chown $USER $LOG_FILE
 
 # the worker now detects its own id from openstack or AWS metadata (cloud-init)
 # TODO: Update the ansible play to inject the arch3 version number into the jar name in this command.
-nohup java -cp pancancer-arch-3-{{ pancancer_arch3_version }}.jar info.pancancer.arch3.worker.Worker --uuid {{ ansible_hostname }} --config workerConfig.ini --pidFile $PID_FILE {{ endless_worker_flag }}  </dev/null > $LOG_FILE 2>&1 &
+nohup java -DCONSONANCE_LOG_FILE=/home/ubuntu/ConsonanceWorker.log -cp pancancer-arch-3-{{ pancancer_arch3_version }}.jar info.pancancer.arch3.worker.Worker --uuid {{ ansible_hostname }} --config workerConfig.ini --pidFile $PID_FILE {{ endless_worker_flag }}  </dev/null > $LOG_FILE 2>&1 &
 PID=$!
 echo $PID > $PID_FILE
 echo "PID of worker daemon is $PID"
