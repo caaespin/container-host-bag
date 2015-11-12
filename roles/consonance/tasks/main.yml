@@ -63,6 +63,9 @@
 - name: Copy files extracted files into correct location
   shell: creates=/icgc/dcc-storage/bin/dcc-storage-client mv /icgc/dcc-storage/archive/dcc-storage-client-{{ dcc_storage_version }}/* /icgc/dcc-storage/
 
+- name: Template shell script
+  template: src=dcc-storage-client.j2 dest=/icgc/dcc-storage/bin/dcc-storage-client owner=ubuntu
+
 # end dcc-storage
 
 - name: Run worker as daemon

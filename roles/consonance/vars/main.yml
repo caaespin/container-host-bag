@@ -6,4 +6,5 @@ queueUser: queue_user
 queuePassword: queue
 hostUser: ubuntu
 seqware_engine: whitestar
-dcc_storage_version: 0.0.43
+dcc_storage_version: 0.0.47-20151112.184710-3
+dcc_target: collab
