@@ -91,7 +91,7 @@
   roles:
     - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
 
-# Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the arch_3 stuff...
+# Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the consonance stuff...
 - hosts: master
   sudo: True
   include: ../monitoring-bag/site.yml  sensu_server_host=sensu-server
@@ -99,7 +99,7 @@
 - hosts: master
   sudo: True
   roles:
-    - { role: arch_3 }
+    - { role: consonance }
 
 - hosts: master
   roles:

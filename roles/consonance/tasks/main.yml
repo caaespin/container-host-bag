@@ -1,6 +1,6 @@
 ---
 - name: Get Architecture3 jar file
-  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/cancer/collaboratory/pancancer-arch-3/{{ pancancer_arch3_version }}/pancancer-arch-3-{{ pancancer_arch3_version }}.jar dest=/home/ubuntu/pancancer-arch-3-{{ pancancer_arch3_version }}.jar
+  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/consonance/consonance-arch/{{ consonance_arch_version }}/consonance-arch-{{ consonance_arch_version }}.jar dest=/home/ubuntu/consonance-arch-{{ consonance_arch_version }}.jar
 
 # The "endless" flag for the worker is not a true/false, it's "--endless" or "".
 - name: Conditionally turn endless_worker_flag on
@@ -40,6 +40,33 @@
   with_fileglob:
     - /home/ubuntu/.gnos/*
     - /home/ubuntu/.aws/*
+
+- name: Install cwltool
+  pip: name=cwl-runner executable=pip2.7
+
+# install dcc-storage
+
+- name: Create required directory
+  sudo: true
+  file: path=/icgc/dcc-storage/ owner=ubuntu state=directory
+
+- name: Create working directory
+  sudo: true
+  file: path=/icgc/dcc-storage/archive owner=ubuntu state=directory
+
+- name: Get file 
+  get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/dcc-release/org/icgc/dcc/dcc-storage-client/{{ dcc_storage_version }}/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/archive
+
+- name: Unarchive the dcc tool
+  unarchive: src=/icgc/dcc-storage/archive/dcc-storage-client-{{ dcc_storage_version }}-dist.tar.gz dest=/icgc/dcc-storage/archive  copy=no
+
+- name: Copy files extracted files into correct location
+  shell: creates=/icgc/dcc-storage/bin/dcc-storage-client mv /icgc/dcc-storage/archive/dcc-storage-client-{{ dcc_storage_version }}/* /icgc/dcc-storage/
+
+- name: Template shell script
+  template: src=dcc-storage-client.j2 dest=/icgc/dcc-storage/bin/dcc-storage-client owner=ubuntu
+
+# end dcc-storage
 
 - name: Run worker as daemon
   sudo: true
