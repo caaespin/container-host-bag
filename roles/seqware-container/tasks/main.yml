@@ -9,18 +9,6 @@
 - name: Install docker-py
   pip: name=docker-py state=present version=1.1.0
 
-# This file is used for installing a seqware container
-- name: Install seqware_whitestar Docker container for pancancer
-  docker:
-    image: pancancer/seqware_whitestar_pancancer:{{ seqware_version }}
-    pull: missing
-
-# This file is used for installing a seqware container
-- name: Install seqware_whitestar Docker container
-  docker:
-    image: seqware/seqware_whitestar:{{ seqware_version }}
-    pull: missing
-
 - name: Create workflows directory
   sudo: yes
   file: path=/workflows state=directory owner=ubuntu group=ubuntu mode=0777
