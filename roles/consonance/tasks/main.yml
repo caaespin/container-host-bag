@@ -41,8 +41,14 @@
     - /home/ubuntu/.gnos/*
     - /home/ubuntu/.aws/*
 
+- name: Install avro 
+  pip: name=avro executable=pip2.7 version=1.7.7
+
+- name: Install schema-salad
+  pip: name=schema-salad executable=pip2.7 version=1.7.20160316203940
+
 - name: Install cwltool
-  pip: name=cwl-runner executable=pip2.7
+  pip: name=cwltool executable=pip2.7 version=1.0.20160323212343
 
 # install dcc-storage
 
