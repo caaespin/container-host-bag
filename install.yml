@@ -92,9 +92,10 @@
     - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
 
 # Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the consonance stuff...
-- hosts: master
-  sudo: True
-  include: ../monitoring-bag/site.yml  sensu_server_host=sensu-server
+# Not strictly needed for consonance 2 development
+# - hosts: master
+#   sudo: True
+#   include: ../monitoring-bag/site.yml  sensu_server_host=sensu-server
 
 - hosts: master
   sudo: True
