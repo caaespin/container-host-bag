@@ -7,7 +7,7 @@
   changed_when: false
 
 - name: Download workflows (HTTP)
-  sudo_user: "{{ user_name }}"
+  become_user: "{{ user_name }}"
 #  get_url: url=http://s3.amazonaws.com/oicr.workflow.bundles/released-bundles/{{ item }}.zip dest={{ target_workflow_path }}/{{ item }}.zip timeout=30
 #  when: '"{{ item }}" not in provisioned_bundles.stdout'
   get_url: url={{ item.value.url }} dest={{ target_workflow_path }}/{{ item.value.name }}.zip timeout=60
@@ -18,14 +18,14 @@
   delay: 15
 
 - name: Copy over AWS config
-  sudo_user: 'ubuntu'
+  become_user: 'ubuntu'
   copy: src={{ item }} dest={{ item }}
   when: s3_containers is defined or s3_workflows is defined
   with_fileglob:
     - /home/ubuntu/.aws/*
 
 - name: Download workflows (S3)
-  sudo_user: "{{ user_name }}"
+  become_user: "{{ user_name }}"
   shell: creates={{ target_workflow_path }}/{{ item.value.name }}.zip aws s3 cp {{ item.value.url }} {{ target_workflow_path }}/{{ item.value.name }}.zip
   register: workflows_downloaded
   when: '"{{ item.value.name }}" not in provisioned_bundles.stdout and s3_workflows is defined'

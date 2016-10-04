@@ -4,11 +4,19 @@
 
 # Not sure why, but I needed this to create a /etc/hosts that actually works with the Ubuntu image here on openstack
 - hosts: master:worker
-  sudo: True
+  become: yes
+  become_user: root
+  # needed for ubuntu 16.04 LS and above
+  gather_facts: no
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt-get -y install python-simplejson
   # Idempotent way to build a /etc/hosts file with Ansible using your Ansible hosts inventory for a source.
   # Will include all hosts the playbook is run on.
   # Inspired from http://xmeblog.blogspot.com/2013/06/ansible-dynamicaly-update-etchosts.html
   tasks:
+  - name: Prep python 
+    apt: name=python update_cache=yes
   - name: Build hosts file for all hosts
     lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
     when: hostvars[item].ansible_default_ipv4.address is defined and docker is not defined
@@ -28,7 +36,7 @@
 
   # This is a super-fugly way of determining the number of hosts in total, Ansible bug referenced
 - hosts: master:worker
-  sudo: True
+  become_user: root
   tasks:
   - name: Determine number of hosts in fugly way
     include: roles/common/tasks/determine_num_hosts.yml
@@ -37,24 +45,25 @@
   roles:
     - { role: common }
 
-- hosts: master:worker
-  sudo: True
-  vars:
-      single_node_lvm: True
-      shared_storage_system: lvm
-      vendor_data: /datastore
-      lvm_device_whitelist: /dev/xvdd,/dev/xvde
-  include: roles/storage/common/tasks/play_deploy_lvm_storage.yml
+#broken in Ansible 2.0
+#- vars:
+#      single_node_lvm: True
+#    shared_storage_system: lvm
+#    vendor_data: /datastore
+#    lvm_device_whitelist: /dev/xvdd,/dev/xvde
+#include: roles/storage/common/tasks/play_deploy_lvm_storage.yml
 
 - hosts: master:worker
-  sudo: True
+  become: yes
+  become_user: root
   tasks:
   - name: Make sure ubuntu owns the datastore
     file: path=/datastore owner=ubuntu group=ubuntu state=directory
 
 
 - hosts: master:worker
-  sudo: True
+  become: yes
+  become_user: root
   vars:
    swap_on: False
   roles:
@@ -68,7 +77,8 @@
 
 
 - hosts: master:worker
-  sudo: True
+  become: yes
+  become_user: root
   vars:
     user_name: ubuntu
   tasks:
@@ -78,7 +88,8 @@
         - /home/{{ user_name }}/.gnos/*
 
 - hosts: master
-  sudo: True
+  become: yes
+  become_user: root
   vars:
     installed_workflows_path: /workflows
     target_workflow_path: /workflows
@@ -87,18 +98,20 @@
     - { role: workflow, when: http_workflows is defined or s3_workflows is defined }
 
 - hosts: master
-  sudo: true
+  become: yes
+  become_user: root
   roles:
     - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
 
 # Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the consonance stuff...
 # Not strictly needed for consonance 2 development
 # - hosts: master
-#   sudo: True
+#   become_user: root
 #   include: ../monitoring-bag/site.yml  sensu_server_host=sensu-server
 
 - hosts: master
-  sudo: True
+  become: yes
+  become_user: root
   roles:
     - { role: consonance }
 

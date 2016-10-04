@@ -3,6 +3,8 @@
   get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/ubuntu/downloads/get-pip.py
 
 - name: Install pip
+  become: yes
+  become_user: root
   command: python /home/ubuntu/downloads/get-pip.py
 
 # fixed to version 1.1.0 due to a bug (2015-05-07, SolomonShorser)
@@ -10,5 +12,5 @@
   pip: name=docker-py state=present version=1.1.0
 
 - name: Create workflows directory
-  sudo: yes
+  become_user: root
   file: path=/workflows state=directory owner=ubuntu group=ubuntu mode=0777

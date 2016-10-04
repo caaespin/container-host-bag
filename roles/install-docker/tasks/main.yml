@@ -12,7 +12,7 @@
 #    - restart docker
 
 - name: setup ubuntu user for non-root access
-  sudo: yes
+  become_user: root
   shell:  usermod -aG docker ubuntu
   ignore_errors: true
 
@@ -25,5 +25,6 @@
   when: docker_info_post | failed
 
 - name: restart docker service
-  sudo: yes
-  shell: service docker restart
+  become: yes
+  become_user: root
+  service: name=docker state=restarted

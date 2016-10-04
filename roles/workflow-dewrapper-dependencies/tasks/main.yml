@@ -9,19 +9,19 @@
 #  get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/ubuntu/downloads/get-pip.py
 
 #- name: Install pip
-#  sudo: True
+#  become_user: root
 #  shell: python /home/ubuntu/downloads/get-pip.py
 
 #- name: Install docker-py
-#  sudo: True
+#  become_user: root
 #  pip: name=docker-py
 
 #- name: Install AWS CLI
-#  sudo: True
+#  become_user: root
 #  pip: name=awscli
 
 #- name: Setup aws config directory
-#  sudo: true
+#  become_user: root
 #  file: state=directory path=/home/ubuntu/.aws owner=ubuntu
 
 #- name: Copy over aws config
@@ -51,7 +51,7 @@
 #  when: copy_over_dkfz_images.changed
 
 - name: Create workflows directory
-  sudo: yes
+  become_user: root
   file: path=/workflows state=directory owner=ubuntu group=ubuntu mode=0777
 
 - name: check if /datastore already exists
@@ -60,14 +60,14 @@
 
 # This may already exists (created in another playbook), as symlink to /mnt/datastore
 - name: Create datastore directory
-  sudo: yes
+  become_user: root
   file: path=/datastore state=directory owner=ubuntu group=ubuntu mode=0777
   when: not datastoreStat.stat.exists
 
 - name: Get workflow launcher script
-  sudo_user: 'ubuntu'
+  become_user: 'ubuntu'
   get_url: dest=/home/ubuntu//launchWorkflow.sh url=https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/DEWrapperWorkflow/{{ dewrapper_workflow_version }}/launchWorkflow.sh
 
 - name: Get workflow launcher script for Whitestar
-  sudo_user: 'ubuntu'
+  become_user: 'ubuntu'
   get_url: dest=/home/ubuntu//launchWorkflowDev.sh url=https://raw.githubusercontent.com/ICGC-TCGA-PanCancer/DEWrapperWorkflow/{{ dewrapper_workflow_version }}/launchWorkflowDev.sh
