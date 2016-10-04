@@ -4,7 +4,8 @@
   copy: src=roles/common/files/bashrc dest=/home/ubuntu/.bashrc owner=ubuntu
 
 - name: Install dependencies for docker container installation
-  sudo: true
+  become: yes
+  become_user: root
   apt: pkg={{ item }} state=present update_cache=yes cache_valid_time=3600
   with_items:
     - python
@@ -13,17 +14,21 @@
   get_url: url=https://bootstrap.pypa.io/get-pip.py dest=/home/ubuntu/downloads/get-pip.py
 
 - name: Install pip
-  sudo: True
+  become: yes
+  become_user: root
   shell: python /home/ubuntu/downloads/get-pip.py
 
 - name: Install docker-py
-  sudo: True
+  become: yes
+  become_user: root
   pip: name=docker-py
 
 - name: Install AWS CLI
-  sudo: True
+  become: yes
+  become_user: root
   pip: name=awscli
 
 - name: Setup aws config directory
-  sudo: true
+  become: yes
+  become_user: root
   file: state=directory path=/home/ubuntu/.aws owner=ubuntu

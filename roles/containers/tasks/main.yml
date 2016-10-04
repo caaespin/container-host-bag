@@ -6,14 +6,14 @@
   with_dict: containers | default({})
 
 - name: Copy over AWS config/credentials files
-  sudo_user: 'ubuntu'
+  become_user: 'ubuntu'
   copy: src={{ item }} dest={{ item }}
   when: s3_containers is defined
   with_fileglob:
     - /home/ubuntu/.aws/*
 
 - name: Get docker images from S3
-  sudo_user: 'ubuntu'
+  become_user: 'ubuntu'
   shell: creates=/home/ubuntu/downloads/{{ item.value.name }}.tar aws s3 cp {{ item.value.url }} /home/ubuntu/downloads/{{ item.value.name }}.tar
   register: copy_over_private_image
   with_dict: s3_containers | default({})

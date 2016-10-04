@@ -6,17 +6,17 @@
 
 - name: set licence selected
   shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
-  sudo: yes
+  become_user: root
   changed_when: false
 
 - name: set licence seen
   shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 seen true | /usr/bin/debconf-set-selections
-  sudo: yes
+  become_user: root
   changed_when: false
 
 - name: install java 8
   apt: name=oracle-java8-installer state=latest update-cache=yes force=yes
-  sudo: yes
+  become_user: root
 
 - name: Java | Set JAVA_HOME
   lineinfile: 

@@ -42,22 +42,22 @@
     - /home/ubuntu/.aws/*
 
 - name: Install avro 
-  pip: name=avro executable=pip2.7 version=1.7.7
+  pip: name=avro executable=pip2.7 version=1.8.1
 
 - name: Install schema-salad
-  pip: name=schema-salad executable=pip2.7 version=1.7.20160316203940
+  pip: name=schema-salad executable=pip2.7 version=1.14.20160708181155
 
 - name: Install cwltool
-  pip: name=cwltool executable=pip2.7 version=1.0.20160323212343
+  pip: name=cwltool executable=pip2.7 version=1.0.20160712154127
 
 # install dcc-storage
 
 #- name: Create required directory
-#  sudo: true
+#  become_user: root
 #  file: path=/icgc/dcc-storage/ owner=ubuntu state=directory
 #
 #- name: Create working directory
-#  sudo: true
+#  become_user: root
 #  file: path=/icgc/dcc-storage/archive owner=ubuntu state=directory
 #
 #- name: Get file 
@@ -75,5 +75,5 @@
 # end dcc-storage
 
 - name: Run worker as daemon
-  sudo: true
+  become_user: root
   shell: chdir=/home/ubuntu nohup bash /home/ubuntu/run_worker_daemon.sh &
