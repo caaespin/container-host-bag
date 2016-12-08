@@ -2,7 +2,8 @@
 # file: roles/java/tasks/oracle8.yml
 
 - name: add repo for java 8
-  apt_repository: repo='ppa:webupd8team/java' state=present
+  shell: add-apt-repository -y ppa:webupd8team/java
+  become_user: root
 
 - name: set licence selected
   shell: /bin/echo debconf shared/accepted-oracle-license-v1-1 select true | /usr/bin/debconf-set-selections
@@ -19,10 +20,8 @@
   become_user: root
 
 - name: Java | Set JAVA_HOME
-  lineinfile: 
+  lineinfile:
     line: 'JAVA_HOME=/usr/lib/jvm/java-8-oracle'
     dest: /etc/environment
     state: present
     create: yes
-
-
