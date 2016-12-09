@@ -61,13 +61,13 @@
   copy: src=roles/consonance/files/main_new.py dest=/usr/local/lib/python2.7/dist-packages/cwltool/main.py owner=root
 
 - name: Delete compiled job files
-command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/job.pyc
+  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/job.pyc
 
 - name: Delete compiled process files
-command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/process.pyc
+  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/process.pyc
 
 - name: Delete compiled main files
-command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/main.pyc
+  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/main.pyc
 
 # install dcc-storage
 
