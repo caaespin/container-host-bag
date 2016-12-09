@@ -72,7 +72,7 @@
     - { role: swap-enabled, when: swap_on and ansible_swaptotal_mb < 9000 }
     - { role: java, java_provider: Oracle8 }
     - { role: install-docker }
-    - { role: seqware-container }
+#    - { role: seqware-container }
 #    - { role: workflow-dewrapper-dependencies, when: (workflow_name is defined and 'DEWrapper' in workflow_name ) }
 
 
