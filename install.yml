@@ -97,11 +97,11 @@
 #  roles:
 #    - { role: workflow, when: http_workflows is defined or s3_workflows is defined }
 
-- hosts: master
-  become: yes
-  become_user: root
-  roles:
-    - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
+#- hosts: master
+#  become: yes
+#  become_user: root
+#  roles:
+#    - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
 
 # Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the consonance stuff...
 # Not strictly needed for consonance 2 development
