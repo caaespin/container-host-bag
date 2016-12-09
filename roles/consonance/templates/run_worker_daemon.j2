@@ -23,7 +23,7 @@ sudo chown $USER $LOG_FILE
 # the worker now detects its own id from openstack or AWS metadata (cloud-init)
 # TODO: Update the ansible play to inject the arch version number into the jar name in this command.
 export TMPDIR=/datastore
-nohup java -cp /home/ubuntu/consonance-arch-{{ consonance_arch_version }}.jar io.consonance.arch.worker.Worker --uuid {{ ansible_hostname }} --config /home/ubuntu/workerConfig.ini --pidFile $PID_FILE {{ endless_worker_flag }}  </dev/null > $LOG_FILE 2>&1 &
+nohup java -cp /home/ubuntu/consonance-arch-*.jar io.consonance.arch.worker.Worker --uuid {{ ansible_hostname }} --config /home/ubuntu/workerConfig.ini --pidFile $PID_FILE {{ endless_worker_flag }}  </dev/null > $LOG_FILE 2>&1 &
 PID=$!
 echo $PID > $PID_FILE
 echo "PID of worker daemon is $PID"
