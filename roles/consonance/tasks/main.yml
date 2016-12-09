@@ -69,12 +69,6 @@ command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/process.pyc
 - name: Delete compiled main files
 command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/main.pyc
 
-- name: Copy over patched ssh file for Ansible
-  copy: src=roles/consonance/files/ssh.py dest=/usr/lib/python2.7/dist-packages/ansible/plugins/connection/ssh.py owner=root
-
-- name: Delete compiled ssh files
-command: rm -f /usr/lib/python2.7/dist-packages/ansible/plugins/connection/ssh.pyc
-
 # install dcc-storage
 
 #- name: Create required directory
