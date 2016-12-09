@@ -15,7 +15,7 @@
   # Will include all hosts the playbook is run on.
   # Inspired from http://xmeblog.blogspot.com/2013/06/ansible-dynamicaly-update-etchosts.html
   tasks:
-  - name: Prep python 
+  - name: Prep python
     apt: name=python update_cache=yes
   - name: Build hosts file for all hosts
     lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
@@ -73,29 +73,29 @@
     - { role: java, java_provider: Oracle8 }
     - { role: install-docker }
     - { role: seqware-container }
-    - { role: workflow-dewrapper-dependencies, when: (workflow_name is defined and 'DEWrapper' in workflow_name ) }
+#    - { role: workflow-dewrapper-dependencies, when: (workflow_name is defined and 'DEWrapper' in workflow_name ) }
 
 
-- hosts: master:worker
-  become: yes
-  become_user: root
-  vars:
-    user_name: ubuntu
-  tasks:
-    - name: Copy gnos.pem keys to worker
-      copy: src={{ item }} dest=/home/{{ user_name }}/.gnos/ owner={{ user_name }} group={{ user_name }}
-      with_fileglob:
-        - /home/{{ user_name }}/.gnos/*
+#- hosts: master:worker
+#  become: yes
+#  become_user: root
+#  vars:
+#    user_name: ubuntu
+#  tasks:
+#    - name: Copy gnos.pem keys to worker
+#      copy: src={{ item }} dest=/home/{{ user_name }}/.gnos/ owner={{ user_name }} group={{ user_name }}
+#      with_fileglob:
+#        - /home/{{ user_name }}/.gnos/*
 
-- hosts: master
-  become: yes
-  become_user: root
-  vars:
-    installed_workflows_path: /workflows
-    target_workflow_path: /workflows
-    user_name: ubuntu
-  roles:
-    - { role: workflow, when: http_workflows is defined or s3_workflows is defined }
+#- hosts: master
+#  become: yes
+#  become_user: root
+#  vars:
+#    installed_workflows_path: /workflows
+#    target_workflow_path: /workflows
+#    user_name: ubuntu
+#  roles:
+#    - { role: workflow, when: http_workflows is defined or s3_workflows is defined }
 
 - hosts: master
   become: yes
@@ -115,6 +115,6 @@
   roles:
     - { role: consonance }
 
-- hosts: master
-  roles:
-    - { role: test, when: test_workflows is defined and test_workflows }
+#- hosts: master
+#  roles:
+#    - { role: test, when: test_workflows is defined and test_workflows }
