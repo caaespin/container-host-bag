@@ -17,10 +17,10 @@
   tasks:
   - name: Prep python
     apt: name=python update_cache=yes
-  - name: Build hosts file for all hosts
-    lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
-    when: hostvars[item].ansible_default_ipv4.address is defined and docker is not defined
-    with_items: groups['all']
+#  - name: Build hosts file for all hosts
+#    lineinfile: dest=/etc/hosts regexp='.*{{ item }}$' line="{{ hostvars[item].ansible_default_ipv4.address }} {{item}}" state=present
+#    when: hostvars[item].ansible_default_ipv4.address is defined and docker is not defined
+#    with_items: groups['all']
   - name: Setting hostname to {{ inventory_hostname }}
     hostname: name={{ inventory_hostname }}
   - name: Disable automatic retrieval of hostname from dhcp on Amazon EC2
