@@ -1,7 +1,6 @@
 ---
 - name: Get Architecture3 jar file
-  get_url: url=https://www.dropbox.com/s/giy9ayxlvpoohiz/consonance-arch-2.0-alpha.11-SNAPSHOT.jar?dl=1 dest=/home/ubuntu/consonance-arch-{{ consonance_arch_version }}.jar
-  #get_url: url=https://seqwaremaven.oicr.on.ca/artifactory/simple/seqware-release/io/consonance/consonance-arch/{{ consonance_arch_version }}/consonance-arch-{{ consonance_arch_version }}.jar dest=/home/ubuntu/consonance-arch-{{ consonance_arch_version }}.jar
+  get_url: url=https://github.com/Consonance/consonance/releases/download/{{ consonance_arch_version }}/consonance-arch-{{ consonance_arch_version }}.jar dest=/home/ubuntu/consonance-arch-{{ consonance_arch_version }}.jar
 
 # The "endless" flag for the worker is not a true/false, it's "--endless" or "".
 - name: Conditionally turn endless_worker_flag on
@@ -42,32 +41,37 @@
     - /home/ubuntu/.gnos/*
     - /home/ubuntu/.aws/*
 
+- name: Install setuptools
+  pip: name=setuptools executable=pip2.7 version=34.2.0
+
 - name: Install avro
   pip: name=avro executable=pip2.7 version=1.8.1
 
 - name: Install schema-salad
-  pip: name=schema-salad executable=pip2.7 version=1.14.20160708181155
+  pip: name=schema-salad executable=pip2.7 version=2.2.20170222151604
 
 - name: Install cwltool
-  pip: name=cwltool executable=pip2.7 version=1.0.20160712154127
+  pip: name=cwltool executable=pip2.7 version=1.0.20170217172322
 
-- name: Copy over patched job files
-  copy: src=roles/consonance/files/job_new.py dest=/usr/local/lib/python2.7/dist-packages/cwltool/job.py owner=root
+  # this part is fragile and did not survive the new cwltool versions (i.e. cannot resolve equivalent of merge conflict)
 
-- name: Copy over patched process files
-  copy: src=roles/consonance/files/process_new.py dest=/usr/local/lib/python2.7/dist-packages/cwltool/process.py owner=root
+#- name: Copy over patched job files
+#  copy: src=roles/consonance/files/job_new.py dest=/usr/local/lib/python2.7/dist-packages/cwltool/job.py owner=root
 
-- name: Copy over patched main files
-  copy: src=roles/consonance/files/main_new.py dest=/usr/local/lib/python2.7/dist-packages/cwltool/main.py owner=root
+#- name: Copy over patched process files
+#  copy: src=roles/consonance/files/process_new.py dest=/usr/local/lib/python2.7/dist-packages/cwltool/process.py owner=root
 
-- name: Delete compiled job files
-  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/job.pyc
+#- name: Copy over patched main files
+#  copy: src=roles/consonance/files/main_new.py dest=/usr/local/lib/python2.7/dist-packages/cwltool/main.py owner=root
 
-- name: Delete compiled process files
-  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/process.pyc
+#- name: Delete compiled job files
+#  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/job.pyc
 
-- name: Delete compiled main files
-  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/main.pyc
+#- name: Delete compiled process files
+#  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/process.pyc
+
+#- name: Delete compiled main files
+#  command: rm -f /usr/local/lib/python2.7/dist-packages/cwltool/main.pyc
 
 # install dcc-storage
 

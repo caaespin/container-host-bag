@@ -72,36 +72,6 @@
     - { role: swap-enabled, when: swap_on and ansible_swaptotal_mb < 9000 }
     - { role: java, java_provider: Oracle8 }
     - { role: install-docker }
-#    - { role: seqware-container }
-#    - { role: workflow-dewrapper-dependencies, when: (workflow_name is defined and 'DEWrapper' in workflow_name ) }
-
-
-#- hosts: master:worker
-#  become: yes
-#  become_user: root
-#  vars:
-#    user_name: ubuntu
-#  tasks:
-#    - name: Copy gnos.pem keys to worker
-#      copy: src={{ item }} dest=/home/{{ user_name }}/.gnos/ owner={{ user_name }} group={{ user_name }}
-#      with_fileglob:
-#        - /home/{{ user_name }}/.gnos/*
-
-#- hosts: master
-#  become: yes
-#  become_user: root
-#  vars:
-#    installed_workflows_path: /workflows
-#    target_workflow_path: /workflows
-#    user_name: ubuntu
-#  roles:
-#    - { role: workflow, when: http_workflows is defined or s3_workflows is defined }
-
-#- hosts: master
-#  become: yes
-#  become_user: root
-#  roles:
-#    - { role: containers, when: containers is defined or http_containers is defined or s3_containers is defined }
 
 # Install monitoring components onto the client, once it is set up with all necessary containers. Maybe should happen before the consonance stuff...
 # Not strictly needed for consonance 2 development
@@ -114,7 +84,3 @@
   become_user: root
   roles:
     - { role: consonance }
-
-#- hosts: master
-#  roles:
-#    - { role: test, when: test_workflows is defined and test_workflows }
