@@ -23,17 +23,17 @@
 - name: Template workerConfig
   template: src=workerConfig.j2 dest=/home/ubuntu/workerConfig.ini owner=ubuntu
 
-- name: Create .seqware directory
-  file: path=/home/ubuntu/.seqware state=directory owner=ubuntu
-  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
+#- name: Create .seqware directory
+#  file: path=/home/ubuntu/.seqware state=directory owner=ubuntu
+#  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
-- name: Copy base custom seqware settings
-  copy: src=../files/seqware_settings.ini dest=/home/ubuntu/.seqware/settings owner=ubuntu
-  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
+#- name: Copy base custom seqware settings
+#  copy: src=../files/seqware_settings.ini dest=/home/ubuntu/.seqware/settings owner=ubuntu
+#  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
-- name: Uncomment the custom seqware settings, IF you've requested that.
-  replace: dest=/home/ubuntu/workerConfig.ini regexp='^(\#seqware-)(.*)$' replace='seqware-\2' backup=yes owner=ubuntu
-  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
+#- name: Uncomment the custom seqware settings, IF you've requested that.
+#  replace: dest=/home/ubuntu/workerConfig.ini regexp='^(\#seqware-)(.*)$' replace='seqware-\2' backup=yes owner=ubuntu
+#  when: seqware_use_custom_settings is defined and seqware_use_custom_settings
 
 - name: Copy over keys/credentials for workers.
   copy: src={{ item }} dest={{ item }} owner=ubuntu
@@ -96,6 +96,11 @@
 #  template: src=dcc-storage-client.j2 dest=/icgc/dcc-storage/bin/dcc-storage-client owner=ubuntu
 
 # end dcc-storage
+
+- file:
+    path: /root/.dockstore
+    state: directory
+    owner: root
 
 - name: Run worker as daemon
   become_user: root
